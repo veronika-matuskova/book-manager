@@ -1,62 +1,186 @@
-# Book Manager
+# Book Manager MVP
 
-A Playwright-based project for managing books from Amazon Kindle Library and StoryGraph.
+A StoryGraph-inspired book management application built as a local, offline-first MVP. This application allows users to manage their personal book collection, track reading progress, and organize books by status.
+
+## Features
+
+For a complete feature list and detailed specifications, see:
+- [Features Summary](./docs/FEATURES_SUMMARY.md) - Quick reference of all MVP features
+- [PRD - Core Features](./docs/PRD.md#3-core-features) - Detailed feature specifications
+- [User Stories](./docs/USER_STORIES.md) - Detailed user stories organized by epic
+
+**Key Features:**
+- User Profile Management - See [PRD Section 3.1](./docs/PRD.md#31-user-profile-management)
+- Book Database - See [PRD Section 3.2](./docs/PRD.md#32-book-database-management)
+- Personal Collection - See [PRD Section 3.3](./docs/PRD.md#33-user-book-collection)
+- Reading Status Management - See [PRD Section 3.4](./docs/PRD.md#34-reading-status-management)
+- Series Management - See [PRD Section 3.2.1](./docs/PRD.md#321-add-books-to-database) and [USER_STORIES.md Epic 7](./docs/USER_STORIES.md)
+- Search & Filter - See [PRD Section 3.3.2](./docs/PRD.md#332-manage-my-books)
+- Bulk Operations - See [PRD Section 4.5](./docs/PRD.md#45-bulk-operations-flow)
+
+## Tech Stack
+
+For detailed technical requirements and recommendations, see [PRD Section 5 - Technical Requirements](./docs/PRD.md#5-technical-requirements).
+
+**Current Implementation:**
+- **Frontend**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **Database**: SQLite (using sql.js for browser-based storage)
+- **Storage**: localStorage (database stored in browser)
+- **Routing**: React Router v6
 
 ## Setup
 
-### 1. Install Dependencies
+### Prerequisites
 
+- Node.js 18+ installed
+- npm or yarn
+
+### Installation
+
+1. Install dependencies:
 ```bash
 npm install
 ```
 
-### 2. Install Playwright Browsers
-
+2. Start the development server:
 ```bash
-npx playwright install
+npm run dev
 ```
 
-### 3. Configure Environment Variables
+3. Open your browser to `http://localhost:3000`
 
-See the details in [ENV_SETUP.md](./env/ENV_SETUP.md)
-
-## Usage
-
-### Running Tests
+### Building for Production
 
 ```bash
-# Run all tests
-npm test
-
-# Run tests in headed mode (see browser)
-npm run test:headed
-
-# Run tests in debug mode
-npm run test:debug
+npm run build
+npm run preview
 ```
-
-## Security
-
-- **Never commit `.env` file** - It contains sensitive credentials
-- **Never commit passwords** - Always use environment variables
-- The `.env` file is already in `.gitignore` for your protection
 
 ## Project Structure
 
 ```
 book-manager/
-├── .gitignore           # Git ignore rules
-├── package.json         # Project dependencies and scripts
-├── tsconfig.json        # TypeScript configuration
-├── playwright.config.ts # Playwright configuration
-├── data/                # Data files
-│   ├── harFiles/       # HAR files for network capture
-│   └── jsonExport/     # Exported JSON data
-├── env/                 # Environment setup documentation
-│   ├── .env             # Your actual credentials (gitignored)
-│   └── ENV_SETUP.md
-├── src/                 # Source code
-├── tests/               # Playwright test files
-└── test-results/        # Test execution results (generated)
+├── src/
+│   ├── components/      # React components
+│   │   ├── Layout.tsx
+│   │   ├── Navigation.tsx
+│   │   └── BookCard.tsx
+│   ├── context/         # React context providers
+│   │   └── AppContext.tsx
+│   ├── db/              # Database layer
+│   │   ├── schema.ts
+│   │   └── database.ts
+│   ├── pages/           # Page components
+│   │   ├── ProfileSetup.tsx
+│   │   ├── Profile.tsx
+│   │   ├── Explore.tsx
+│   │   ├── MyBooks.tsx
+│   │   ├── AddBook.tsx
+│   │   ├── BookDetail.tsx
+│   │   └── SeriesDetail.tsx
+│   ├── types/           # TypeScript type definitions
+│   │   └── index.ts
+│   ├── App.tsx          # Main app component
+│   ├── main.tsx         # Entry point
+│   └── index.css        # Global styles
+├── docs/                # Documentation (see [docs/README.md](./docs/README.md))
+│   ├── PRD.md           # Product Requirements Document
+│   ├── USER_STORIES.md  # User Stories
+│   ├── DATA_MODELS.md   # Data Models Specification
+│   └── FEATURES_SUMMARY.md # Quick feature reference
+├── specs/               # Test specifications and plans
+├── tests/               # Playwright tests
+└── package.json
 ```
 
+## Usage
+
+For detailed user flows and acceptance criteria, see:
+- [PRD Section 4 - User Flows](./docs/PRD.md#4-user-flows) - Complete user flow documentation
+- [USER_STORIES.md](./docs/USER_STORIES.md) - Detailed user stories with acceptance criteria
+- [PRD Section 6 - UI/UX Requirements](./docs/PRD.md#6-uiux-requirements) - Interface specifications
+
+### Quick Start Guide
+
+**First Time Setup:** See [PRD Section 4.1](./docs/PRD.md#41-first-time-user-flow) and [USER_STORIES.md Epic 1](./docs/USER_STORIES.md#epic-1-user-profile-management)
+
+**Adding Books:** See [PRD Section 4.2](./docs/PRD.md#42-adding-a-new-book-flow) and [USER_STORIES.md US-2.1](./docs/USER_STORIES.md#us-21-add-book-to-database)
+
+**Managing Reading Status:** See [PRD Section 4.3](./docs/PRD.md#43-managing-reading-status-flow) and [PRD Section 3.4.1](./docs/PRD.md#341-set-reading-status)
+
+**Filtering and Searching:** See [PRD Section 4.4](./docs/PRD.md#44-filtering-and-searching-flow)
+
+**Bulk Operations:** See [PRD Section 4.5](./docs/PRD.md#45-bulk-operations-flow)
+
+## Database
+
+For complete database schema, data models, and storage information, see:
+- [DATA_MODELS.md](./docs/DATA_MODELS.md) - Complete data model definitions, TypeScript interfaces, and SQL schema
+- [PRD Section 5.2](./docs/PRD.md#52-data-storage) - Data storage architecture
+- [PRD Section 5.4](./docs/PRD.md#54-database-schema) - Database schema overview
+
+**Current Implementation:**
+- Database stored in browser's localStorage (SQLite via sql.js)
+- All data stored locally and persists across sessions
+- Schema created automatically on first load
+- For backup, export localStorage data or use the database export functionality
+
+## Development Notes
+
+### Database Layer
+
+The database layer uses sql.js (SQLite compiled to WebAssembly). For schema details, see [DATA_MODELS.md](./docs/DATA_MODELS.md) and [PRD Section 5.4](./docs/PRD.md#54-database-schema). Schema is created automatically on first load.
+
+### State Management
+
+The app uses React Context for global state management (user profile). Database queries are made directly from components. See [PRD Section 5.1](./docs/PRD.md#51-technology-stack-recommendations) for architecture details.
+
+### Styling
+
+The app uses a purple/lavender theme (#b189e8) inspired by StoryGraph. Styles are in `src/index.css` with CSS variables for easy theming. See [PRD Section 6.1](./docs/PRD.md#61-design-principles) for design requirements.
+
+## Testing
+
+For testing requirements and test plans, see:
+- [PRD Section 10 - Testing Requirements](./docs/PRD.md#10-testing-requirements) - Functional and acceptance testing requirements
+- [specs/](./specs/) directory - Test plans and scenarios
+
+**Running Tests:**
+```bash
+npm test
+```
+
+## Known Limitations & Future Enhancements
+
+For a complete list of MVP limitations and out-of-scope features, see [PRD Section 8 - Out of Scope](./docs/PRD.md#8-out-of-scope-future-features).
+
+**MVP Limitations:**
+- Single user per instance (MVP limitation)
+- Database stored in localStorage (limited to ~5-10MB in most browsers)
+- No image uploads (only URLs supported)
+
+**Future Enhancements:**
+See [PRD Section 8](./docs/PRD.md#8-out-of-scope-future-features) for a complete list, including:
+- Import from external sources (Goodreads, Amazon, etc.)
+- Export functionality
+- Statistics and analytics
+- Reading challenges
+- Social features
+
+## Documentation
+
+Comprehensive documentation is available in the `docs/` folder:
+- **[docs/README.md](./docs/README.md)** - Documentation index and quick start guide
+- **[PRD.md](./docs/PRD.md)** - Complete Product Requirements Document
+- **[FEATURES_SUMMARY.md](./docs/FEATURES_SUMMARY.md)** - Quick feature reference
+- **[USER_STORIES.md](./docs/USER_STORIES.md)** - Detailed user stories by epic
+- **[DATA_MODELS.md](./docs/DATA_MODELS.md)** - Data models and database schema
+
+## License
+
+ISC
+
+## Disclaimer
+
+This application is **not a copy** of the StoryGraph application. It is an independent project **inspired by** StoryGraph's design and functionality. Any similarities in design or features are for inspiration purposes only.

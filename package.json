@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
     "test": "playwright test",
     "test:debug": "PWDEBUG=1 playwright test",
     "test:headed": "playwright test --headed"
@@ -10,13 +13,25 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "StoryGraph-inspired Book Management MVP",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0",
+    "sql.js": "^1.10.2",
+    "uuid": "^9.0.1"
+  },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1",
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@types/uuid": "^9.0.7",
+    "@vitejs/plugin-react": "^4.2.1",
     "dotenv": "^17.2.3",
     "playwright": "^1.57.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vite": "^5.0.8"
   }
 }
