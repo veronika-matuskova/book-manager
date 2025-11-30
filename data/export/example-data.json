@@ -1,0 +1,341 @@
+{
+  "users": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "username": "booklover",
+      "displayName": "Alex Reader",
+      "email": "alex.reader@example.com",
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "updatedAt": "2024-01-15T10:30:00.000Z"
+    }
+  ],
+  "books": [
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440001",
+      "title": "The Hobbit",
+      "author": "J.R.R. Tolkien",
+      "isbn": "978-0547928227",
+      "seriesId": "770e8400-e29b-41d4-a716-446655440001",
+      "position": 0,
+      "publicationYear": 1937,
+      "pages": 310,
+      "format": "physical",
+      "coverImageUrl": "https://images-na.ssl-images-amazon.com/images/I/712cDO7d73L.jpg",
+      "description": "The journey of Bilbo Baggins, a hobbit who embarks on an unexpected adventure with a group of dwarves.",
+      "createdAt": "2024-01-15T11:00:00.000Z",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440002",
+      "title": "The Fellowship of the Ring",
+      "author": "J.R.R. Tolkien",
+      "isbn": "978-0547928210",
+      "seriesId": "770e8400-e29b-41d4-a716-446655440001",
+      "position": 1,
+      "publicationYear": 1954,
+      "pages": 432,
+      "format": "physical",
+      "coverImageUrl": "https://images-na.ssl-images-amazon.com/images/I/51Q8wQJ4ZQL.jpg",
+      "description": "The first volume of The Lord of the Rings trilogy, following Frodo Baggins as he sets out to destroy the One Ring.",
+      "createdAt": "2024-01-15T11:00:00.000Z",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440003",
+      "title": "1984",
+      "author": "George Orwell",
+      "isbn": "978-0452284234",
+      "publicationYear": 1949,
+      "pages": 328,
+      "format": "digital",
+      "coverImageUrl": "https://images-na.ssl-images-amazon.com/images/I/81WgS3VdAYL.jpg",
+      "description": "A dystopian novel about totalitarian surveillance and thought control in a futuristic society.",
+      "createdAt": "2024-01-15T11:00:00.000Z",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440004",
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "isbn": "978-0061120084",
+      "publicationYear": 1960,
+      "pages": 376,
+      "format": "physical",
+      "coverImageUrl": "https://images-na.ssl-images-amazon.com/images/I/81aY1lxk+9L.jpg",
+      "description": "A coming-of-age story set in the American South, addressing racial injustice through the eyes of a young girl.",
+      "createdAt": "2024-01-15T11:00:00.000Z",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440005",
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "isbn": "978-0141439518",
+      "publicationYear": 1813,
+      "pages": 432,
+      "format": "digital",
+      "coverImageUrl": "https://images-na.ssl-images-amazon.com/images/I/71Q1tPupKjL.jpg",
+      "description": "A romantic novel about Elizabeth Bennet and Mr. Darcy, exploring themes of love, class, and personal growth.",
+      "createdAt": "2024-01-15T11:00:00.000Z",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440006",
+      "title": "Dune",
+      "author": "Frank Herbert",
+      "isbn": "978-0441013593",
+      "publicationYear": 1965,
+      "pages": 688,
+      "format": "physical",
+      "coverImageUrl": "https://images-na.ssl-images-amazon.com/images/I/81zN2s2wjXL.jpg",
+      "description": "An epic science fiction novel set on the desert planet Arrakis, following Paul Atreides.",
+      "createdAt": "2024-01-15T11:00:00.000Z",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440007",
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "isbn": "978-0743273565",
+      "publicationYear": 1925,
+      "pages": 180,
+      "format": "physical",
+      "coverImageUrl": "https://images-na.ssl-images-amazon.com/images/I/81QuEGw8VPL.jpg",
+      "description": "A classic American novel about the Jazz Age, following Nick Carraway and his mysterious neighbor Jay Gatsby.",
+      "createdAt": "2024-01-15T11:00:00.000Z",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440008",
+      "title": "Project Hail Mary",
+      "author": "Andy Weir",
+      "isbn": "978-0593135204",
+      "publicationYear": 2021,
+      "pages": 496,
+      "format": "digital",
+      "coverImageUrl": "https://images-na.ssl-images-amazon.com/images/I/81KQ+6vi2hL.jpg",
+      "description": "A science fiction thriller about a lone astronaut who must save humanity from extinction.",
+      "createdAt": "2024-01-15T11:00:00.000Z",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440009",
+      "title": "The Handmaid's Tale",
+      "author": "Margaret Atwood",
+      "isbn": "978-0385490818",
+      "publicationYear": 1985,
+      "pages": 311,
+      "format": "audiobook",
+      "coverImageUrl": "https://images-na.ssl-images-amazon.com/images/I/81zSQwqGzYL.jpg",
+      "description": "A dystopian novel set in a totalitarian society where women are subjugated and used for reproduction.",
+      "createdAt": "2024-01-15T11:00:00.000Z",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440010",
+      "title": "The Seven Husbands of Evelyn Hugo",
+      "author": "Taylor Jenkins Reid",
+      "isbn": "978-1501139239",
+      "publicationYear": 2017,
+      "pages": 400,
+      "format": "digital",
+      "coverImageUrl": "https://images-na.ssl-images-amazon.com/images/I/71Q5f4V1BRL.jpg",
+      "description": "A captivating novel about a reclusive Hollywood icon who finally decides to tell her story to an unknown journalist.",
+      "createdAt": "2024-01-15T11:00:00.000Z",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    }
+  ],
+  "series": [
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440001",
+      "name": "The Lord of the Rings",
+      "author": "J.R.R. Tolkien",
+      "createdAt": "2024-01-15T11:00:00.000Z",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    }
+  ],
+  "genres": [
+    {
+      "id": "880e8400-e29b-41d4-a716-446655440001",
+      "name": "Fantasy",
+      "createdAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "880e8400-e29b-41d4-a716-446655440002",
+      "name": "Science Fiction",
+      "createdAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "880e8400-e29b-41d4-a716-446655440003",
+      "name": "Classic Literature",
+      "createdAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "880e8400-e29b-41d4-a716-446655440004",
+      "name": "Dystopian",
+      "createdAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "880e8400-e29b-41d4-a716-446655440005",
+      "name": "Romance",
+      "createdAt": "2024-01-15T11:00:00.000Z"
+    },
+    {
+      "id": "880e8400-e29b-41d4-a716-446655440006",
+      "name": "Historical Fiction",
+      "createdAt": "2024-01-15T11:00:00.000Z"
+    }
+  ],
+  "userBooks": [
+    {
+      "id": "990e8400-e29b-41d4-a716-446655440001",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440001",
+      "status": "read",
+      "startedDate": "2024-01-01",
+      "finishedDate": "2024-01-10",
+      "progress": 100,
+      "addedAt": "2024-01-01T09:00:00.000Z",
+      "updatedAt": "2024-01-10T18:00:00.000Z"
+    },
+    {
+      "id": "990e8400-e29b-41d4-a716-446655440002",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440002",
+      "status": "currently-reading",
+      "startedDate": "2024-01-11",
+      "finishedDate": null,
+      "progress": 65,
+      "addedAt": "2024-01-11T10:00:00.000Z",
+      "updatedAt": "2024-01-15T14:30:00.000Z"
+    },
+    {
+      "id": "990e8400-e29b-41d4-a716-446655440003",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440003",
+      "status": "read",
+      "startedDate": "2023-12-15",
+      "finishedDate": "2023-12-25",
+      "progress": 100,
+      "addedAt": "2023-12-15T08:00:00.000Z",
+      "updatedAt": "2023-12-25T20:00:00.000Z"
+    },
+    {
+      "id": "990e8400-e29b-41d4-a716-446655440004",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440004",
+      "status": "read",
+      "startedDate": "2023-11-01",
+      "finishedDate": "2023-11-15",
+      "progress": 100,
+      "addedAt": "2023-11-01T10:00:00.000Z",
+      "updatedAt": "2023-11-15T16:00:00.000Z"
+    },
+    {
+      "id": "990e8400-e29b-41d4-a716-446655440005",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440005",
+      "status": "to-read",
+      "startedDate": null,
+      "finishedDate": null,
+      "progress": 0,
+      "addedAt": "2024-01-15T12:00:00.000Z",
+      "updatedAt": "2024-01-15T12:00:00.000Z"
+    },
+    {
+      "id": "990e8400-e29b-41d4-a716-446655440006",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440006",
+      "status": "to-read",
+      "startedDate": null,
+      "finishedDate": null,
+      "progress": 0,
+      "addedAt": "2024-01-15T12:00:00.000Z",
+      "updatedAt": "2024-01-15T12:00:00.000Z"
+    },
+    {
+      "id": "990e8400-e29b-41d4-a716-446655440007",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440007",
+      "status": "read",
+      "startedDate": "2023-10-10",
+      "finishedDate": "2023-10-18",
+      "progress": 100,
+      "addedAt": "2023-10-10T11:00:00.000Z",
+      "updatedAt": "2023-10-18T19:00:00.000Z"
+    },
+    {
+      "id": "990e8400-e29b-41d4-a716-446655440008",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440008",
+      "status": "currently-reading",
+      "startedDate": "2024-01-12",
+      "finishedDate": null,
+      "progress": 30,
+      "addedAt": "2024-01-12T09:00:00.000Z",
+      "updatedAt": "2024-01-15T13:00:00.000Z"
+    },
+    {
+      "id": "990e8400-e29b-41d4-a716-446655440009",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440009",
+      "status": "read",
+      "startedDate": "2023-09-05",
+      "finishedDate": "2023-09-20",
+      "progress": 100,
+      "addedAt": "2023-09-05T10:00:00.000Z",
+      "updatedAt": "2023-09-20T17:00:00.000Z"
+    },
+    {
+      "id": "990e8400-e29b-41d4-a716-446655440010",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440010",
+      "status": "to-read",
+      "startedDate": null,
+      "finishedDate": null,
+      "progress": 0,
+      "addedAt": "2024-01-15T12:00:00.000Z",
+      "updatedAt": "2024-01-15T12:00:00.000Z"
+    }
+  ],
+  "readingCountLogs": [
+    {
+      "id": "aa0e8400-e29b-41d4-a716-446655440001",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440001",
+      "seriesId": null,
+      "readDate": "2024-01-10",
+      "createdAt": "2024-01-10T18:00:00.000Z"
+    },
+    {
+      "id": "aa0e8400-e29b-41d4-a716-446655440002",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440003",
+      "seriesId": null,
+      "readDate": "2023-12-25",
+      "createdAt": "2023-12-25T20:00:00.000Z"
+    },
+    {
+      "id": "aa0e8400-e29b-41d4-a716-446655440003",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "bookId": "660e8400-e29b-41d4-a716-446655440004",
+      "seriesId": null,
+      "readDate": "2023-11-15",
+      "createdAt": "2023-11-15T16:00:00.000Z"
+    }
+  ],
+  "exportedAt": "2024-01-15T15:00:00.000Z",
+  "version": "1.0.0",
+  "bookGenreMap": {
+    "660e8400-e29b-41d4-a716-446655440001": ["Fantasy", "Classic Literature"],
+    "660e8400-e29b-41d4-a716-446655440002": ["Fantasy", "Classic Literature"],
+    "660e8400-e29b-41d4-a716-446655440003": ["Dystopian", "Classic Literature"],
+    "660e8400-e29b-41d4-a716-446655440004": ["Classic Literature", "Historical Fiction"],
+    "660e8400-e29b-41d4-a716-446655440005": ["Romance", "Classic Literature"],
+    "660e8400-e29b-41d4-a716-446655440006": ["Science Fiction"],
+    "660e8400-e29b-41d4-a716-446655440007": ["Classic Literature"],
+    "660e8400-e29b-41d4-a716-446655440008": ["Science Fiction"],
+    "660e8400-e29b-41d4-a716-446655440009": ["Dystopian"],
+    "660e8400-e29b-41d4-a716-446655440010": ["Historical Fiction", "Romance"]
+  }
+}

@@ -226,14 +226,24 @@ export async function importDatabaseFromJSON(jsonData: string, clearExisting: bo
   for (const userBook of data.userBooks) {
     try {
       addBookToUserCollection(userBook.userId, userBook.bookId);
+      
+      // Convert date strings to Date objects if they exist
+      const startedDate = userBook.startedDate 
+        ? (typeof userBook.startedDate === 'string' ? new Date(userBook.startedDate) : userBook.startedDate)
+        : undefined;
+      const finishedDate = userBook.finishedDate 
+        ? (typeof userBook.finishedDate === 'string' ? new Date(userBook.finishedDate) : userBook.finishedDate)
+        : undefined;
+      
       updateUserBook(userBook.userId, userBook.bookId, {
         status: userBook.status,
-        startedDate: userBook.startedDate,
-        finishedDate: userBook.finishedDate,
+        startedDate: startedDate,
+        finishedDate: finishedDate,
         progress: userBook.progress
       });
     } catch (error: any) {
       if (!error.message?.includes('already')) {
+        console.error(`Failed to import user book for book ${userBook.bookId}:`, error);
         throw error;
       }
     }
@@ -242,11 +252,14 @@ export async function importDatabaseFromJSON(jsonData: string, clearExisting: bo
   // 5. Reading Count Logs
   for (const log of data.readingCountLogs) {
     try {
+      // Convert date string to Date object if it's a string
+      const readDate = typeof log.readDate === 'string' ? new Date(log.readDate) : log.readDate;
+      
       addReadingCountLog(
         log.userId,
         log.bookId,
         log.seriesId,
-        log.readDate
+        readDate
       );
     } catch (error) {
       console.warn(`Failed to add reading count log:`, error);
@@ -319,6 +332,17 @@ export async function loadAndImportFromDataFolder(path: string, clearExisting: b
     console.error(`❌ Failed to load and import from ${path}:`, error);
     throw error;
   }
+}
+
+/**
+ * Clear the database and recreate it with the latest schema
+ * Useful for fixing schema migration issues
+ * WARNING: This will delete all data!
+ */
+export function clearAndResetDatabase(): void {
+  localStorage.removeItem('book-manager-db');
+  console.log('✅ Database cleared. Refresh the page to create a new database with the latest schema.');
+  alert('Database cleared! Please refresh the page to recreate it.');
 }
 
 /**
