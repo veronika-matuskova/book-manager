@@ -28,8 +28,7 @@ Store your exported database backups here. These are JSON files containing:
 **To Export:**
 ```javascript
 // In browser console:
-const { downloadDatabaseJSON } = await import('/src/db/data-io.js');
-await downloadDatabaseJSON('book-manager-db.json');
+await window.dataIO.downloadDatabaseJSON('book-manager-db.json');
 // Then move downloaded file to data/export/
 ```
 
@@ -38,8 +37,18 @@ Contains seed data or imported book lists (like Amazon exports).
 
 **To Load:**
 ```javascript
-const { loadAmazonExport } = await import('/src/db/data-io.js');
-await loadAmazonExport('jsonExport/deduped_books_and_documents.json');
+// In browser console:
+const count = await window.dataIO.loadAmazonExport('jsonExport/deduped_books_and_documents.json');
+console.log(`Imported ${count} books`);
+```
+
+**To Import Example Data:**
+```javascript
+// In browser console - easiest way (one step):
+await window.dataIO.loadAndImportFromDataFolder('export/example-data.json');
+
+// Or load a custom export file:
+await window.dataIO.loadAndImportFromDataFolder('export/book-manager-db.json');
 ```
 
 ## Accessing Files

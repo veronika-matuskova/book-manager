@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS books (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CHECK (length(trim(title)) > 0),
-  CHECK (length(trim(author)) > 0),
-  CHECK (publication_year IS NULL OR (publication_year >= 1000 AND publication_year <= CAST(strftime('%Y', 'now') AS INTEGER) + 1))
+  CHECK (length(trim(author)) > 0)
+  -- Note: publication_year validation moved to application level to avoid non-deterministic CHECK constraint
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_title_author ON books(LOWER(title), LOWER(author));

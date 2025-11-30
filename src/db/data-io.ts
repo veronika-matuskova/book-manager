@@ -24,7 +24,8 @@ import {
   getAllSeries,
   getAllGenres,
   getUserBooks,
-  getBookGenres
+  getBookGenres,
+  getOrCreateGenre
 } from './database';
 
 export interface DatabaseExport {
@@ -162,14 +163,29 @@ export async function importDatabaseFromJSON(jsonData: string, clearExisting: bo
       });
     } catch (error: any) {
       if (!error.message?.includes('already exists')) {
+        console.error(`Failed to import series "${ser.name}" by ${ser.author}:`, error);
         throw error;
       }
+    }
+  }
+  
+  // 2.5. Genres (ensure they exist before books reference them)
+  // Genres will also be auto-created when books are added, but pre-creating is cleaner
+  for (const genre of data.genres) {
+    try {
+      getOrCreateGenre(genre.name);
+    } catch (error: any) {
+      console.warn(`Failed to pre-create genre "${genre.name}":`, error);
+      // Continue - genres will be created when books are added
     }
   }
   
   // 3. Books (with genres)
   // Get genre mapping if available (from newer exports)
   const bookGenreMap = (data as any).bookGenreMap || {};
+  
+  let importedBooks = 0;
+  let skippedBooks = 0;
   
   for (const book of data.books) {
     try {
@@ -190,12 +206,21 @@ export async function importDatabaseFromJSON(jsonData: string, clearExisting: bo
         description: book.description,
         genres: genreNames.length > 0 ? genreNames : undefined
       });
+      importedBooks++;
+      console.log(`✓ Imported book: "${book.title}" by ${book.author}`);
     } catch (error: any) {
-      if (!error.message?.includes('already exists')) {
+      if (error.message?.includes('already exists')) {
+        skippedBooks++;
+        console.log(`⊘ Skipped existing book: "${book.title}" by ${book.author}`);
+      } else {
+        console.error(`✗ Failed to import book "${book.title}" by ${book.author}:`, error);
+        console.error('  Error details:', error.message || error);
         throw error;
       }
     }
   }
+  
+  console.log(`\n📚 Import summary: ${importedBooks} books imported, ${skippedBooks} skipped`);
   
   // 4. User Books
   for (const userBook of data.userBooks) {
@@ -266,6 +291,34 @@ export function convertAmazonExportToBooks(amazonData: any[]): BookFormData[] {
       description: undefined
     };
   });
+}
+
+/**
+ * Load and import database export JSON file from data folder
+ * This is a convenience function that loads the file and imports it in one step
+ */
+export async function loadAndImportFromDataFolder(path: string, clearExisting: boolean = false): Promise<void> {
+  try {
+    console.log(`📂 Loading data from: /data/${path}`);
+    const jsonData = await loadJSONFromDataFolder(path);
+    
+    if (!jsonData) {
+      throw new Error('Failed to load JSON data - file may not exist or is empty');
+    }
+    
+    console.log(`📦 Data loaded. Importing...`);
+    console.log(`   - ${jsonData.users?.length || 0} users`);
+    console.log(`   - ${jsonData.books?.length || 0} books`);
+    console.log(`   - ${jsonData.series?.length || 0} series`);
+    console.log(`   - ${jsonData.genres?.length || 0} genres`);
+    
+    // Convert the parsed object back to JSON string for importDatabaseFromJSON
+    await importDatabaseFromJSON(JSON.stringify(jsonData), clearExisting);
+    console.log(`✅ Import completed successfully!`);
+  } catch (error) {
+    console.error(`❌ Failed to load and import from ${path}:`, error);
+    throw error;
+  }
 }
 
 /**
