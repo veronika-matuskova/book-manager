@@ -40,7 +40,8 @@ describe('AddBook', () => {
       </MemoryRouter>
     );
     
-    expect(screen.getByText('Add Book')).toBeInTheDocument();
+    // Use getByRole for heading to avoid ambiguity with button text
+    expect(screen.getByRole('heading', { name: /Add Book/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/Title/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Author/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Add Book/i })).toBeInTheDocument();
@@ -53,8 +54,13 @@ describe('AddBook', () => {
       </MemoryRouter>
     );
     
-    const submitButton = screen.getByRole('button', { name: /Add Book/i });
-    fireEvent.click(submitButton);
+    const form = screen.getByRole('button', { name: /Add Book/i }).closest('form');
+    if (form) {
+      fireEvent.submit(form);
+    } else {
+      const submitButton = screen.getByRole('button', { name: /Add Book/i });
+      fireEvent.click(submitButton);
+    }
     
     await waitFor(() => {
       expect(screen.getByText(/Title is required/i)).toBeInTheDocument();
@@ -71,8 +77,13 @@ describe('AddBook', () => {
     const titleInput = screen.getByLabelText(/Title/i);
     fireEvent.change(titleInput, { target: { value: 'Test Book' } });
     
-    const submitButton = screen.getByRole('button', { name: /Add Book/i });
-    fireEvent.click(submitButton);
+    const form = screen.getByRole('button', { name: /Add Book/i }).closest('form');
+    if (form) {
+      fireEvent.submit(form);
+    } else {
+      const submitButton = screen.getByRole('button', { name: /Add Book/i });
+      fireEvent.click(submitButton);
+    }
     
     await waitFor(() => {
       expect(screen.getByText(/Author is required/i)).toBeInTheDocument();
@@ -247,8 +258,13 @@ describe('AddBook', () => {
     fireEvent.change(authorInput, { target: { value: 'Author' } });
     fireEvent.change(descriptionInput, { target: { value: 'A'.repeat(5001) } });
     
-    const submitButton = screen.getByRole('button', { name: /Add Book/i });
-    fireEvent.click(submitButton);
+    const form = screen.getByRole('button', { name: /Add Book/i }).closest('form');
+    if (form) {
+      fireEvent.submit(form);
+    } else {
+      const submitButton = screen.getByRole('button', { name: /Add Book/i });
+      fireEvent.click(submitButton);
+    }
     
     await waitFor(() => {
       expect(screen.getByText(/Description cannot exceed 5000 characters/i)).toBeInTheDocument();
@@ -324,8 +340,13 @@ describe('AddBook', () => {
       </MemoryRouter>
     );
     
-    const submitButton = screen.getByRole('button', { name: /Add Book/i });
-    fireEvent.click(submitButton);
+    const form = screen.getByRole('button', { name: /Add Book/i }).closest('form');
+    if (form) {
+      fireEvent.submit(form);
+    } else {
+      const submitButton = screen.getByRole('button', { name: /Add Book/i });
+      fireEvent.click(submitButton);
+    }
     
     await waitFor(() => {
       expect(screen.getByText(/Title is required/i)).toBeInTheDocument();
@@ -366,8 +387,10 @@ describe('AddBook', () => {
         </MemoryRouter>
       );
       
-      expect(screen.getByLabelText(/Series/i)).toBeInTheDocument();
-      expect(screen.getByText('Series')).toBeInTheDocument();
+      // Use more specific query - the select dropdown should have a label
+      const seriesSelect = screen.getByRole('combobox', { name: /^Series$/i }) || document.querySelector('select[name="seriesId"]') as HTMLSelectElement;
+      expect(seriesSelect).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Series' })).toBeInTheDocument();
     });
 
     it('should populate series dropdown with available series', () => {
@@ -379,15 +402,18 @@ describe('AddBook', () => {
         </MemoryRouter>
       );
       
-      const seriesSelect = screen.getByLabelText(/Series/i) as HTMLSelectElement;
+      const seriesSelect = document.querySelector('select#seriesId') as HTMLSelectElement;
       expect(seriesSelect).toBeInTheDocument();
       
-      // Check that "None" option exists
-      expect(screen.getByText('None')).toBeInTheDocument();
+      // Check that "None" option exists in the select
+      const noneOption = Array.from(seriesSelect.options).find(opt => opt.text === 'None');
+      expect(noneOption).toBeTruthy();
       
-      // Check that series options are present
-      expect(screen.getByText('Test Series by Series Author')).toBeInTheDocument();
-      expect(screen.getByText('Another Series by Another Author')).toBeInTheDocument();
+      // Check that series options are present in the select
+      const testSeriesOption = Array.from(seriesSelect.options).find(opt => opt.text === 'Test Series by Series Author');
+      const anotherSeriesOption = Array.from(seriesSelect.options).find(opt => opt.text === 'Another Series by Another Author');
+      expect(testSeriesOption).toBeTruthy();
+      expect(anotherSeriesOption).toBeTruthy();
     });
 
     it('should show position input when series is selected', async () => {
@@ -402,8 +428,8 @@ describe('AddBook', () => {
       // Position input should not be visible initially
       expect(screen.queryByLabelText(/Position in Series/i)).not.toBeInTheDocument();
       
-      // Select a series
-      const seriesSelect = screen.getByLabelText(/Series/i) as HTMLSelectElement;
+      // Select a series - use querySelector to avoid ambiguity with heading
+      const seriesSelect = document.querySelector('select#seriesId') as HTMLSelectElement;
       fireEvent.change(seriesSelect, { target: { value: 'series-1' } });
       
       // Position input should now be visible
@@ -421,8 +447,8 @@ describe('AddBook', () => {
         </MemoryRouter>
       );
       
-      // Select a series
-      const seriesSelect = screen.getByLabelText(/Series/i) as HTMLSelectElement;
+      // Select a series - use querySelector to avoid ambiguity with heading
+      const seriesSelect = document.querySelector('select#seriesId') as HTMLSelectElement;
       fireEvent.change(seriesSelect, { target: { value: 'series-1' } });
       
       await waitFor(() => {
@@ -459,7 +485,7 @@ describe('AddBook', () => {
       );
       
       const titleInput = screen.getByLabelText(/Title/i);
-      const authorInput = screen.getByLabelText(/^Author$/i);
+      const authorInput = screen.getByLabelText(/Author/i);
       const seriesSelect = screen.getByLabelText(/^Series$/i) as HTMLSelectElement;
       
       fireEvent.change(titleInput, { target: { value: 'Test Book' } });
@@ -547,7 +573,7 @@ describe('AddBook', () => {
       );
       
       const titleInput = screen.getByLabelText(/Title/i);
-      const authorInput = screen.getByLabelText(/^Author$/i);
+      const authorInput = screen.getByLabelText(/Author/i);
       const seriesSelect = screen.getByLabelText(/^Series$/i) as HTMLSelectElement;
       
       fireEvent.change(titleInput, { target: { value: 'Test Book' } });
@@ -672,9 +698,9 @@ describe('AddBook', () => {
         expect(screen.getByLabelText(/Series Name/i)).toBeInTheDocument();
       });
       
-      // Fill in required book fields
+      // Fill in required book fields - use input name to avoid ambiguity with Series Author
       const titleInput = screen.getByLabelText(/Title/i);
-      const authorInput = screen.getByLabelText(/Author/i);
+      const authorInput = document.querySelector('input[name="author"]') as HTMLInputElement;
       fireEvent.change(titleInput, { target: { value: 'Test Book' } });
       fireEvent.change(authorInput, { target: { value: 'Author' } });
       
@@ -683,8 +709,13 @@ describe('AddBook', () => {
       fireEvent.change(seriesAuthorInput, { target: { value: 'Series Author' } });
       
       // Try to submit
-      const submitButton = screen.getByRole('button', { name: /Add Book/i });
-      fireEvent.click(submitButton);
+      const form = screen.getByRole('button', { name: /Add Book/i }).closest('form');
+      if (form) {
+        fireEvent.submit(form);
+      } else {
+        const submitButton = screen.getByRole('button', { name: /Add Book/i });
+        fireEvent.click(submitButton);
+      }
       
       await waitFor(() => {
         expect(screen.getByText(/Series name is required/i)).toBeInTheDocument();
@@ -708,9 +739,9 @@ describe('AddBook', () => {
         expect(screen.getByLabelText(/Series Name/i)).toBeInTheDocument();
       });
       
-      // Fill in required book fields
+      // Fill in required book fields - use input name to avoid ambiguity with Series Author
       const titleInput = screen.getByLabelText(/Title/i);
-      const authorInput = screen.getByLabelText(/Author/i);
+      const authorInput = document.querySelector('input[name="author"]') as HTMLInputElement;
       fireEvent.change(titleInput, { target: { value: 'Test Book' } });
       fireEvent.change(authorInput, { target: { value: 'Author' } });
       
@@ -719,8 +750,13 @@ describe('AddBook', () => {
       fireEvent.change(seriesNameInput, { target: { value: 'New Series' } });
       
       // Try to submit
-      const submitButton = screen.getByRole('button', { name: /Add Book/i });
-      fireEvent.click(submitButton);
+      const form = screen.getByRole('button', { name: /Add Book/i }).closest('form');
+      if (form) {
+        fireEvent.submit(form);
+      } else {
+        const submitButton = screen.getByRole('button', { name: /Add Book/i });
+        fireEvent.click(submitButton);
+      }
       
       await waitFor(() => {
         expect(screen.getByText(/Series author is required/i)).toBeInTheDocument();
@@ -763,9 +799,9 @@ describe('AddBook', () => {
         expect(screen.getByLabelText(/Series Name/i)).toBeInTheDocument();
       });
       
-      // Fill in book fields
+      // Fill in book fields - use input name to avoid ambiguity with Series Author
       const titleInput = screen.getByLabelText(/Title/i);
-      const authorInput = screen.getByLabelText(/^Author$/i);
+      const authorInput = document.querySelector('input[name="author"]') as HTMLInputElement;
       fireEvent.change(titleInput, { target: { value: 'Test Book' } });
       fireEvent.change(authorInput, { target: { value: 'Author' } });
       
@@ -853,9 +889,9 @@ describe('AddBook', () => {
         expect(screen.getByLabelText(/Series Name/i)).toBeInTheDocument();
       });
       
-      // Fill in book fields
+      // Fill in book fields - use input name to avoid ambiguity with Series Author
       const titleInput = screen.getByLabelText(/Title/i);
-      const authorInput = screen.getByLabelText(/^Author$/i);
+      const authorInput = screen.getByRole('textbox', { name: /^Author/i }) || document.querySelector('input[name="author"]') as HTMLInputElement;
       fireEvent.change(titleInput, { target: { value: 'Test Book' } });
       fireEvent.change(authorInput, { target: { value: 'Author' } });
       

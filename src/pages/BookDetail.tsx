@@ -32,11 +32,15 @@ export default function BookDetail() {
   useEffect(() => {
     if (id && user) {
       loadBook();
-      if (book?.seriesId) {
-        setSeriesBookCount(getSeriesBookCount(book.seriesId));
-      }
     }
   }, [id, user]);
+
+  // Set seriesBookCount when book changes
+  useEffect(() => {
+    if (book?.seriesId) {
+      setSeriesBookCount(getSeriesBookCount(book.seriesId));
+    }
+  }, [book?.seriesId]);
 
   const loadBook = () => {
     if (!id) return;

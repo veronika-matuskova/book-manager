@@ -170,13 +170,17 @@ describe('Profile', () => {
     const editButton = screen.getByRole('button', { name: /Edit Profile/i });
     fireEvent.click(editButton);
     
+    // Wait for form to be populated with user data
     await waitFor(() => {
       const emailInput = screen.getByDisplayValue('test@example.com') as HTMLInputElement;
-      fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
-      
-      const saveButton = screen.getByRole('button', { name: /Save Changes/i });
-      fireEvent.click(saveButton);
+      expect(emailInput).toBeInTheDocument();
     });
+    
+    const emailInput = screen.getByDisplayValue('test@example.com') as HTMLInputElement;
+    fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
+    
+    const saveButton = screen.getByRole('button', { name: /Save Changes/i });
+    fireEvent.click(saveButton);
     
     await waitFor(() => {
       expect(screen.getByText(/Please enter a valid email address/i)).toBeInTheDocument();
@@ -197,16 +201,22 @@ describe('Profile', () => {
     const editButton = screen.getByRole('button', { name: /Edit Profile/i });
     fireEvent.click(editButton);
     
+    // Wait for form to be populated with user data
     await waitFor(() => {
       const displayNameInput = screen.getByDisplayValue('Test User') as HTMLInputElement;
       const emailInput = screen.getByDisplayValue('test@example.com') as HTMLInputElement;
-      
-      fireEvent.change(displayNameInput, { target: { value: 'Updated Name' } });
-      fireEvent.change(emailInput, { target: { value: 'new@example.com' } });
-      
-      const saveButton = screen.getByRole('button', { name: /Save Changes/i });
-      fireEvent.click(saveButton);
+      expect(displayNameInput).toBeInTheDocument();
+      expect(emailInput).toBeInTheDocument();
     });
+    
+    const displayNameInput = screen.getByDisplayValue('Test User') as HTMLInputElement;
+    const emailInput = screen.getByDisplayValue('test@example.com') as HTMLInputElement;
+    
+    fireEvent.change(displayNameInput, { target: { value: 'Updated Name' } });
+    fireEvent.change(emailInput, { target: { value: 'new@example.com' } });
+    
+    const saveButton = screen.getByRole('button', { name: /Save Changes/i });
+    fireEvent.click(saveButton);
     
     await waitFor(() => {
       expect(database.updateUser).toHaveBeenCalledWith('user-1', {
@@ -228,13 +238,17 @@ describe('Profile', () => {
     const editButton = screen.getByRole('button', { name: /Edit Profile/i });
     fireEvent.click(editButton);
     
+    // Wait for form to be populated with user data
     await waitFor(() => {
       const displayNameInput = screen.getByDisplayValue('Test User') as HTMLInputElement;
-      fireEvent.change(displayNameInput, { target: { value: 'Changed Name' } });
-      
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-      fireEvent.click(cancelButton);
+      expect(displayNameInput).toBeInTheDocument();
     });
+    
+    const displayNameInput = screen.getByDisplayValue('Test User') as HTMLInputElement;
+    fireEvent.change(displayNameInput, { target: { value: 'Changed Name' } });
+    
+    const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+    fireEvent.click(cancelButton);
     
     await waitFor(() => {
       expect(screen.getByText('Test User')).toBeInTheDocument();

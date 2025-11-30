@@ -21,6 +21,16 @@ export default function Profile() {
     }
   }, [user]);
 
+  // Sync formData with user when entering edit mode
+  useEffect(() => {
+    if (user && isEditing) {
+      setFormData({
+        displayName: user.displayName || '',
+        email: user.email || ''
+      });
+    }
+  }, [user, isEditing]);
+
   const validateEmail = (email: string): boolean => {
     if (!email) return true;
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

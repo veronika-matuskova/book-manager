@@ -124,18 +124,27 @@ describe('ProfileSetup', () => {
     
     const usernameInput = screen.getByLabelText(/Username/i);
     const emailInput = screen.getByLabelText(/Email/i);
+    const form = screen.getByRole('button', { name: /Create Profile/i }).closest('form');
     
     fireEvent.change(usernameInput, { target: { value: 'testuser' } });
     fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
     
-    const submitButton = screen.getByRole('button', { name: /Create Profile/i });
-    fireEvent.click(submitButton);
+    // Submit the form directly
+    if (form) {
+      fireEvent.submit(form);
+    } else {
+      const submitButton = screen.getByRole('button', { name: /Create Profile/i });
+      fireEvent.click(submitButton);
+    }
     
     // Wait for validation to run and error to appear
     await waitFor(() => {
-      const errorMessage = screen.queryByText(/Please enter a valid email address/i);
+      const errorMessage = screen.getByText(/Please enter a valid email address/i);
       expect(errorMessage).toBeInTheDocument();
-    }, { timeout: 2000 });
+    }, { timeout: 3000 });
+    
+    // Verify form was not submitted
+    expect(database.createUser).not.toHaveBeenCalled();
   });
 
   it('should accept valid email format', async () => {

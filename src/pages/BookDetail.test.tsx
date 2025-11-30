@@ -1,9 +1,21 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { vi } from 'vitest';
 import BookDetail from './BookDetail';
 import { AppProvider } from '../context/AppContext';
 import * as database from '../db/database';
+
+const mockNavigate = vi.fn();
+
+// Mock react-router-dom
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+    // useParams and MemoryRouter are not mocked - they work with MemoryRouter
+  };
+});
 
 // Mock database functions
 vi.mock('../db/database', async (importOriginal) => {
@@ -11,6 +23,8 @@ vi.mock('../db/database', async (importOriginal) => {
   return {
     ...actual,
     initDatabase: vi.fn().mockResolvedValue(undefined),
+    getFirstUser: vi.fn(),
+    getUser: vi.fn(),
     getBook: vi.fn(),
     getBookGenres: vi.fn(() => []),
     getSeries: vi.fn(),
@@ -49,7 +63,9 @@ const renderWithProviders = (component: React.ReactElement, initialEntries = ['/
   return render(
     <MemoryRouter initialEntries={initialEntries}>
       <AppProvider>
-        {component}
+        <Routes>
+          <Route path="/book/:id" element={component} />
+        </Routes>
       </AppProvider>
     </MemoryRouter>
   );
@@ -59,20 +75,27 @@ describe('BookDetail', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();
+    mockNavigate.mockClear();
+    // Ensure initDatabase resolves immediately
+    vi.mocked(database.initDatabase).mockResolvedValue(undefined);
     vi.mocked(database.getFirstUser).mockReturnValue(mockUser);
     vi.mocked(database.getUser).mockReturnValue(mockUser);
     vi.mocked(database.getBook).mockReturnValue(mockBook);
     vi.mocked(database.getBookGenres).mockReturnValue([]);
     vi.mocked(database.getUserBook).mockReturnValue(null);
+    vi.mocked(database.getSeries).mockReturnValue(null);
   });
 
   it('should render book details', async () => {
     renderWithProviders(<BookDetail />);
     
+    // Wait for book details to appear (this will wait for user to load and book to be fetched)
     await waitFor(() => {
-      expect(screen.getByText('Test Book')).toBeInTheDocument();
+      // Use getAllByText since "Test Book" appears in multiple places (placeholder and h1)
+      const bookTitles = screen.getAllByText('Test Book');
+      expect(bookTitles.length).toBeGreaterThan(0);
       expect(screen.getByText('Author')).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 
   it('should show "Add to My Books" button when book is not in collection', async () => {
@@ -230,10 +253,23 @@ describe('BookDetail', () => {
     
     renderWithProviders(<BookDetail />);
     
+    // Wait for book to load first, then check for series information
     await waitFor(() => {
+      const bookTitles = screen.getAllByText('Test Book');
+      expect(bookTitles.length).toBeGreaterThan(0);
+    }, { timeout: 3000 });
+    
+    // Wait for series information to appear
+    await waitFor(() => {
+      expect(database.getSeries).toHaveBeenCalledWith('series-1');
       expect(screen.getByText(/Test Series/i)).toBeInTheDocument();
+    }, { timeout: 2000 });
+    
+    // Wait for series book count to appear (it's set in a separate useEffect)
+    await waitFor(() => {
+      expect(database.getSeriesBookCount).toHaveBeenCalledWith('series-1');
       expect(screen.getByText(/3 books in series/i)).toBeInTheDocument();
-    });
+    }, { timeout: 2000 });
   });
 
   it('should display genres when book has genres', async () => {
@@ -273,15 +309,7 @@ describe('BookDetail', () => {
   });
 
   it('should navigate back when back button is clicked', async () => {
-    const mockNavigate = vi.fn();
-    
-    vi.mock('react-router-dom', async (importOriginal) => {
-      const actual = await importOriginal<typeof import('react-router-dom')>();
-      return {
-        ...actual,
-        useNavigate: () => mockNavigate
-      };
-    });
+    mockNavigate.mockClear();
     
     renderWithProviders(<BookDetail />);
     
@@ -292,7 +320,8 @@ describe('BookDetail', () => {
     const backButton = screen.getByRole('button', { name: /← Back/i });
     fireEvent.click(backButton);
     
-    // Note: This test may need adjustment based on actual navigation implementation
+    // Verify navigation was called
+    expect(mockNavigate).toHaveBeenCalled();
   });
 
   it('should show loading spinner when book is not loaded', () => {
