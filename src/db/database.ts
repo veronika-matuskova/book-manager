@@ -942,3 +942,52 @@ export function getSeriesBookCount(seriesId: string): number {
   return execCount(db, 'SELECT COUNT(*) as count FROM books WHERE series_id = ?', [seriesId]);
 }
 
+// ============= TEST HELPERS =============
+// These functions are only used for testing purposes
+
+/**
+ * @internal
+ * Set the database instance for testing purposes only
+ * This allows tests to inject a test database instance
+ */
+export function _setTestDbInstance(testDb: SqlJsDatabase | null): void {
+  dbInstance = testDb;
+}
+
+/**
+ * @internal
+ * Get the current database instance (for testing)
+ */
+export function _getDbInstance(): SqlJsDatabase | null {
+  return dbInstance;
+}
+
+/**
+ * @internal
+ * Reset database instance (for testing)
+ */
+export function _resetDbInstance(): void {
+  dbInstance = null;
+}
+
+/**
+ * @internal
+ * Initialize database with custom locateFile function (for testing)
+ */
+export async function _initDatabaseForTesting(locateFile?: (file: string) => string): Promise<void> {
+  if (dbInstance) {
+    return;
+  }
+
+  const SQL = await initSqlJs({
+    locateFile: locateFile || ((file: string) => `https://sql.js.org/dist/${file}`)
+  });
+
+  // Create new database
+  dbInstance = new SQL.Database();
+  // Create schema
+  const schema = createSchema();
+  dbInstance.run(schema);
+  // Don't save to localStorage in tests
+}
+

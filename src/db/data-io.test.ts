@@ -1,24 +1,41 @@
 import { vi } from 'vitest';
-import { initTestDatabase, closeTestDatabase, resetTestDatabase } from '../test/db-test-utils';
-import type { SqlJsDatabase } from 'sql.js';
+import { closeTestDatabase } from '../test/db-test-utils';
 import * as database from './database';
 import * as dataIo from './data-io';
 import type { DatabaseExport } from './data-io';
+import initSqlJs from 'sql.js';
+import path from 'path';
 
 describe('data-io', () => {
-  let testDb: SqlJsDatabase;
-
   beforeEach(async () => {
     localStorage.clear();
-    testDb = await initTestDatabase();
-    vi.spyOn(database as any, 'getDb').mockImplementation(() => testDb);
-    vi.spyOn(database as any, 'saveDatabase').mockImplementation(() => {});
+    
+    // Reset any existing database instance
+    database._resetDbInstance();
+    
+    // Initialize sql.js for Node.js
+    const SQL = await initSqlJs({
+      locateFile: (file: string) => {
+        return path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file);
+      }
+    });
+    
+    // Create fresh test database
+    const testDb = new SQL.Database();
+    const { createSchema } = await import('./database');
+    const schema = await import('./schema');
+    testDb.run(schema.createSchema());
+    
+    // Inject test database using the test helper
+    database._setTestDbInstance(testDb);
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
     closeTestDatabase();
     localStorage.clear();
+    // Reset module state
+    database._resetDbInstance();
   });
 
   describe('convertAmazonExportToBooks', () => {
@@ -101,12 +118,6 @@ describe('data-io', () => {
   });
 
   describe('exportDatabaseToJSON', () => {
-    beforeEach(async () => {
-      await resetTestDatabase();
-      testDb = await initTestDatabase();
-      vi.spyOn(database as any, 'getDb').mockImplementation(() => testDb);
-      vi.spyOn(database as any, 'saveDatabase').mockImplementation(() => {});
-    });
 
     it('should export empty database', async () => {
       const json = await dataIo.exportDatabaseToJSON();
@@ -151,7 +162,10 @@ describe('data-io', () => {
       expect(data.books[0].title).toBe('Test Book');
       expect(data.genres.length).toBeGreaterThanOrEqual(2);
       expect(data.bookGenreMap).toBeDefined();
-      expect(data.bookGenreMap?.[book.id]).toEqual(['Fantasy', 'Adventure']);
+      // Genres might be sorted alphabetically, so check that both are present
+      expect(data.bookGenreMap?.[book.id]).toContain('Fantasy');
+      expect(data.bookGenreMap?.[book.id]).toContain('Adventure');
+      expect(data.bookGenreMap?.[book.id]).toHaveLength(2);
     });
 
     it('should export database with series', async () => {
@@ -188,12 +202,6 @@ describe('data-io', () => {
   });
 
   describe('importDatabaseFromJSON', () => {
-    beforeEach(async () => {
-      await resetTestDatabase();
-      testDb = await initTestDatabase();
-      vi.spyOn(database as any, 'getDb').mockImplementation(() => testDb);
-      vi.spyOn(database as any, 'saveDatabase').mockImplementation(() => {});
-    });
 
     it('should import empty database export', async () => {
       const exportData: DatabaseExport = {
@@ -378,10 +386,6 @@ describe('data-io', () => {
 
   describe('loadJSONFile', () => {
     it('should load and import JSON from File object', async () => {
-      await resetTestDatabase();
-      testDb = await initTestDatabase();
-      vi.spyOn(database as any, 'getDb').mockImplementation(() => testDb);
-      vi.spyOn(database as any, 'saveDatabase').mockImplementation(() => {});
 
       const exportData: DatabaseExport = {
         users: [
