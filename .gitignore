@@ -4,8 +4,9 @@ node_modules/
 # Playwright test results
 test-results/
 
-# HAR files input
+# input files
 *.har
+*.env
 
 # Logs
 logs
