@@ -9,6 +9,8 @@ interface AppContextType {
   createUser: (data: UserFormData) => Promise<void>;
   refreshUser: () => Promise<void>;
   isInitialized: boolean;
+  initError: string | null;
+  clearInitError: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -17,12 +19,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [initError, setInitError] = useState<string | null>(null);
 
   useEffect(() => {
     async function initialize() {
       try {
         await initDatabase();
         setIsInitialized(true);
+        setInitError(null);
         
         // Check for existing user (MVP supports single user)
         const existingUser = getFirstUser();
@@ -31,6 +35,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
       } catch (error) {
         console.error('Failed to initialize database:', error);
+        const errorMessage = error instanceof Error 
+          ? error.message 
+          : 'Failed to initialize database. Please refresh the page to try again.';
+        setInitError(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -38,6 +46,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     initialize();
   }, []);
+
+  const clearInitError = () => {
+    setInitError(null);
+  };
 
   const handleCreateUser = async (data: UserFormData) => {
     try {
@@ -67,7 +79,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setUser,
         createUser: handleCreateUser,
         refreshUser: handleRefreshUser,
-        isInitialized
+        isInitialized,
+        initError,
+        clearInitError
       }}
     >
       {children}
