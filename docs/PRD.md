@@ -637,6 +637,16 @@ CREATE INDEX idx_books_series_id ON books(series_id) WHERE series_id IS NOT NULL
 - Required fields clearly marked
 - Optional fields grouped
 - Cover image preview
+- **Series Section:**
+  - Option to select from existing series (dropdown)
+  - Option to create new series inline (checkbox toggle)
+  - When "Create new series" is checked:
+    - Series name input (required)
+    - Series author input (required)
+    - Position in series input (optional, appears when name/author is filled)
+  - When existing series is selected:
+    - Position in series input (optional)
+  - Series list automatically refreshes after creating new series
 - Save/Cancel buttons
 - Note: Book count not displayed here (not useful context)
 

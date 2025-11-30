@@ -606,13 +606,16 @@
 **So that** I can organize related books together
 
 **Acceptance Criteria:**
-- User can access "Create Series" option (from book detail page or series management page)
+- User can create a series inline when adding a new book (from Add Book page)
+- User can toggle "Create new series" checkbox to show series creation form
 - User can enter series name (required)
 - User can enter series author (required)
 - System checks for duplicate series (by name+author combination)
-- Series is saved to database
-- User receives confirmation when series is created
-- Series appears in series list
+- Series is created automatically when book is submitted
+- Series is saved to database before book creation
+- User receives error message if series creation fails (e.g., duplicate)
+- Newly created series appears in series dropdown for future use
+- Series list automatically refreshes after creation
 
 **Priority:** P0
 

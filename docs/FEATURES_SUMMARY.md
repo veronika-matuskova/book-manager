@@ -21,7 +21,12 @@
   - My Books page: searches only books owned by user
   - Navigation search: searches full DB, highlights owned books (same as Explore)
 - Duplicate detection (by title+author combination only - other parameters can vary)
-- Series support: series name, author, books belong to ONE series (1 book cannot be in more than 1 series)
+- Series support: 
+  - Create new series inline when adding a book (from Add Book page)
+  - Select from existing series or create new one
+  - Series name and author (required for new series)
+  - Books belong to ONE series (1 book cannot be in more than 1 series)
+  - Position in series (optional)
 - Book format: if book has multiple formats, save as separate entries in database
 - Genres: free-form text, displayed as tags, max 20 genres per book, max 255 chars per genre, saved to separate table for re-use
 - Cover image: valid HTTP/HTTPS URL (if fails to load, show title and author; users cannot upload local images)
@@ -143,7 +148,7 @@ Four statuses available:
 ✅ User can set start/finish dates  
 ✅ User can filter and search  
 ✅ Data persists across sessions
-✅ User can manage series (create, edit, delete, add/remove books)
+✅ User can manage series (create inline when adding book, edit, delete, add/remove books)
 ✅ User can track reading count and re-read books
 ✅ All validation errors show clear messages  
 

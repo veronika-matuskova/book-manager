@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createBook, getAllSeries } from '../db/database';
+import { createBook, getAllSeries, createSeries } from '../db/database';
 import type { BookFormData } from '../types';
 
 export default function AddBook() {
@@ -20,9 +20,12 @@ export default function AddBook() {
   const [genreInput, setGenreInput] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [seriesList] = useState(getAllSeries());
+  const [seriesList, setSeriesList] = useState(getAllSeries());
   const [selectedSeriesId, setSelectedSeriesId] = useState('');
   const [seriesPosition, setSeriesPosition] = useState<number | undefined>();
+  const [createNewSeries, setCreateNewSeries] = useState(false);
+  const [newSeriesName, setNewSeriesName] = useState('');
+  const [newSeriesAuthor, setNewSeriesAuthor] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -73,6 +76,14 @@ export default function AddBook() {
     if (formData.genres && formData.genres.length > 20) {
       newErrors.genres = 'Maximum 20 genres per book';
     }
+    if (createNewSeries) {
+      if (!newSeriesName.trim()) {
+        newErrors.newSeriesName = 'Series name is required';
+      }
+      if (!newSeriesAuthor.trim()) {
+        newErrors.newSeriesAuthor = 'Series author is required';
+      }
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -84,10 +95,32 @@ export default function AddBook() {
 
     setIsSubmitting(true);
     try {
+      let finalSeriesId = selectedSeriesId;
+      
+      // Create new series if needed
+      if (createNewSeries && newSeriesName.trim() && newSeriesAuthor.trim()) {
+        try {
+          const newSeries = createSeries({
+            name: newSeriesName.trim(),
+            author: newSeriesAuthor.trim()
+          });
+          finalSeriesId = newSeries.id;
+          // Refresh series list
+          setSeriesList(getAllSeries());
+          setCreateNewSeries(false);
+          setNewSeriesName('');
+          setNewSeriesAuthor('');
+        } catch (seriesError: any) {
+          setErrors(prev => ({ ...prev, general: seriesError.message || 'Failed to create series' }));
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       const bookData: BookFormData = {
         ...formData,
         asin: formData.asin ? formData.asin.toUpperCase() : undefined,
-        seriesId: selectedSeriesId || undefined,
+        seriesId: finalSeriesId || undefined,
         position: seriesPosition
       };
       const book = createBook(bookData);
@@ -266,35 +299,124 @@ export default function AddBook() {
 
         <div className="card" style={{ marginBottom: '20px' }}>
           <h2 style={{ marginBottom: '16px' }}>Series</h2>
+          
           <div style={{ marginBottom: '16px' }}>
-            <label htmlFor="seriesId" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Series</label>
-            <select
-              id="seriesId"
-              value={selectedSeriesId}
-              onChange={(e) => setSelectedSeriesId(e.target.value)}
-              style={{ width: '100%' }}
-            >
-              <option value="">None</option>
-              {seriesList.map(series => (
-                <option key={series.id} value={series.id}>
-                  {series.name} by {series.author}
-                </option>
-              ))}
-            </select>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <input
+                type="checkbox"
+                checked={createNewSeries}
+                onChange={(e) => {
+                  setCreateNewSeries(e.target.checked);
+                  if (e.target.checked) {
+                    setSelectedSeriesId('');
+                  }
+                  setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors.newSeriesName;
+                    delete newErrors.newSeriesAuthor;
+                    return newErrors;
+                  });
+                }}
+              />
+              <span style={{ fontWeight: '500' }}>Create new series</span>
+            </label>
           </div>
 
-          {selectedSeriesId && (
-            <div>
-              <label htmlFor="seriesPosition" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Position in Series</label>
-              <input
-                type="number"
-                id="seriesPosition"
-                value={seriesPosition || ''}
-                onChange={(e) => setSeriesPosition(e.target.value ? Number(e.target.value) : undefined)}
-                style={{ width: '100%' }}
-                min="1"
-              />
-            </div>
+          {createNewSeries ? (
+            <>
+              <div style={{ marginBottom: '16px' }}>
+                <label htmlFor="newSeriesName" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+                  Series Name <span style={{ color: '#dc3545' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  id="newSeriesName"
+                  value={newSeriesName}
+                  onChange={(e) => {
+                    setNewSeriesName(e.target.value);
+                    if (errors.newSeriesName) {
+                      setErrors(prev => ({ ...prev, newSeriesName: '' }));
+                    }
+                  }}
+                  className={errors.newSeriesName ? 'error' : ''}
+                  style={{ width: '100%' }}
+                  placeholder="Enter series name"
+                />
+                {errors.newSeriesName && <div className="error-message">{errors.newSeriesName}</div>}
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <label htmlFor="newSeriesAuthor" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+                  Series Author <span style={{ color: '#dc3545' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  id="newSeriesAuthor"
+                  value={newSeriesAuthor}
+                  onChange={(e) => {
+                    setNewSeriesAuthor(e.target.value);
+                    if (errors.newSeriesAuthor) {
+                      setErrors(prev => ({ ...prev, newSeriesAuthor: '' }));
+                    }
+                  }}
+                  className={errors.newSeriesAuthor ? 'error' : ''}
+                  style={{ width: '100%' }}
+                  placeholder="Enter series author"
+                />
+                {errors.newSeriesAuthor && <div className="error-message">{errors.newSeriesAuthor}</div>}
+              </div>
+
+              {(newSeriesName || newSeriesAuthor) && (
+                <div>
+                  <label htmlFor="seriesPosition" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Position in Series</label>
+                  <input
+                    type="number"
+                    id="seriesPosition"
+                    value={seriesPosition || ''}
+                    onChange={(e) => setSeriesPosition(e.target.value ? Number(e.target.value) : undefined)}
+                    style={{ width: '100%' }}
+                    min="1"
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div style={{ marginBottom: '16px' }}>
+                <label htmlFor="seriesId" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Series</label>
+                <select
+                  id="seriesId"
+                  value={selectedSeriesId}
+                  onChange={(e) => {
+                    setSelectedSeriesId(e.target.value);
+                    // Refresh series list in case new series were added
+                    setSeriesList(getAllSeries());
+                  }}
+                  style={{ width: '100%' }}
+                >
+                  <option value="">None</option>
+                  {seriesList.map(series => (
+                    <option key={series.id} value={series.id}>
+                      {series.name} by {series.author}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {selectedSeriesId && (
+                <div>
+                  <label htmlFor="seriesPosition" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Position in Series</label>
+                  <input
+                    type="number"
+                    id="seriesPosition"
+                    value={seriesPosition || ''}
+                    onChange={(e) => setSeriesPosition(e.target.value ? Number(e.target.value) : undefined)}
+                    style={{ width: '100%' }}
+                    min="1"
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
 
