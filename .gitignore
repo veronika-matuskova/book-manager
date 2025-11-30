@@ -72,3 +72,6 @@ Desktop.ini
 
 # Input files
 *.har
+
+# Data folder copy (synced from data/ folder)
+public/data/
