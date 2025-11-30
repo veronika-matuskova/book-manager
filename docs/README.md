@@ -56,6 +56,20 @@ One-page summary of all MVP features:
 
 ---
 
+### 5. [TECHNICAL_NOTES.md](./TECHNICAL_NOTES.md) - Technical Implementation Details
+Technical documentation including:
+- Recent improvements and refactoring
+- Database architecture
+- Type system details
+- Error handling patterns
+- Testing approach
+- Performance considerations
+- Future improvements
+
+**Use this** for understanding the codebase architecture and implementation details.
+
+---
+
 ## 🎯 Quick Start
 
 1. **New to the project?** → Start with [FEATURES_SUMMARY.md](./FEATURES_SUMMARY.md)
@@ -73,6 +87,7 @@ One-page summary of all MVP features:
 | USER_STORIES.md | ✅ Complete | 2025-11-30 |
 | DATA_MODELS.md | ✅ Complete | 2025-11-30 |
 | FEATURES_SUMMARY.md | ✅ Complete | 2025-11-30 |
+| TECHNICAL_NOTES.md | ✅ Complete | 2025-11-30 |
 
 ---
 

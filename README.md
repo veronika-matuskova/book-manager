@@ -69,8 +69,21 @@ book-manager/
 │   ├── context/         # React context providers
 │   │   └── AppContext.tsx
 │   ├── db/              # Database layer
-│   │   ├── schema.ts
-│   │   └── database.ts
+│   │   ├── database/     # Modular database operations
+│   │   │   ├── core.ts       # Database initialization & shared utilities
+│   │   │   ├── users.ts      # User operations
+│   │   │   ├── books.ts      # Book operations
+│   │   │   ├── genres.ts     # Genre operations
+│   │   │   ├── series.ts     # Series operations
+│   │   │   ├── user-books.ts # User book collection operations
+│   │   │   ├── reading-counts.ts # Reading count operations
+│   │   │   ├── statistics.ts # Statistics operations
+│   │   │   ├── test-helpers.ts # Test helper functions
+│   │   │   └── index.ts      # Re-exports all functions
+│   │   ├── database.ts  # Backward compatibility wrapper
+│   │   ├── db-helpers.ts # SQL.js helper functions
+│   │   ├── schema.ts    # Database schema definition
+│   │   └── data-io.ts   # Data import/export functions
 │   ├── pages/           # Page components
 │   │   ├── ProfileSetup.tsx
 │   │   ├── Profile.tsx
@@ -132,6 +145,23 @@ For complete database schema, data models, and storage information, see:
 
 The database layer uses sql.js (SQLite compiled to WebAssembly). For schema details, see [DATA_MODELS.md](./docs/DATA_MODELS.md) and [PRD Section 5.4](./docs/PRD.md#54-database-schema). Schema is created automatically on first load.
 
+**Architecture:**
+- The database layer is organized into modular files by domain (users, books, genres, series, etc.)
+- Core database initialization and shared utilities are in `src/db/database/core.ts`
+- Each domain has its own module file (e.g., `users.ts`, `books.ts`)
+- All functions are re-exported through `src/db/database/index.ts` for easy importing
+- The original `database.ts` file maintains backward compatibility by re-exporting from the modular structure
+
+**Type Safety:**
+- All database operations use proper TypeScript types (no `any` types)
+- Generic types are used in database helper functions for type-safe query results
+- BookFormat enum values are validated when parsing from database strings
+
+**Error Handling:**
+- Database initialization errors are caught and displayed to users with recovery options
+- User-friendly error messages are shown when database operations fail
+- Error state is managed through React Context for consistent error handling
+
 ### State Management
 
 The app uses React Context for global state management (user profile). Database queries are made directly from components. See [PRD Section 5.1](./docs/PRD.md#51-technology-stack-recommendations) for architecture details.
@@ -176,6 +206,7 @@ Comprehensive documentation is available in the `docs/` folder:
 - **[FEATURES_SUMMARY.md](./docs/FEATURES_SUMMARY.md)** - Quick feature reference
 - **[USER_STORIES.md](./docs/USER_STORIES.md)** - Detailed user stories by epic
 - **[DATA_MODELS.md](./docs/DATA_MODELS.md)** - Data models and database schema
+- **[TECHNICAL_NOTES.md](./docs/TECHNICAL_NOTES.md)** - Technical implementation details and architecture
 
 ## License
 
