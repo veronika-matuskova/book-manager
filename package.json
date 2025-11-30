@@ -12,7 +12,9 @@
     "test:unit:ui": "vitest --ui",
     "test:debug": "PWDEBUG=1 playwright test",
     "test:headed": "playwright test --headed",
-    "test:unit:coverage": "c8 --reporter=html --reporter=text --reporter=json npm run test:unit:run"
+    "test:unit:coverage": "c8 --reporter=html --reporter=text --reporter=json npm run test:unit:run",
+    "coverage:md": "node scripts/generate-coverage-md.js",
+    "test:unit:coverage:md": "npm run test:unit:coverage && npm run coverage:md"
   },
   "keywords": [],
   "author": "",

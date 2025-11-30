@@ -39,6 +39,7 @@ lerna-debug.log*
 # Testing
 coverage/
 .nyc_output/
+COVERAGE.md
 
 # Cache directories
 .cache/
