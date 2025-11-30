@@ -158,19 +158,19 @@
 - System prevents adding duplicate books to collection
 - Book is added with default status "To Read"
 - User receives confirmation message
-- Book appears in "Owned Books" view
+- Book appears in "My Books" view
 
 **Priority:** P0
 
 ---
 
-### US-3.2: View My Owned Books
+### US-3.2: View My Books
 **As a** user  
 **I want to** see all books in my collection  
 **So that** I can manage my library
 
 **Acceptance Criteria:**
-- User can navigate to "Owned Books" page
+- User can navigate to "My Books" page
 - All books in collection are displayed
 - Each book shows cover, title, author, status, and dates
 - Books in series are highlighted with "series" tag and show series name detail
@@ -387,8 +387,8 @@
 - **State Transitions:**
   - **New book added** → Default status "To Read"
   - **"To Read" → "Read"** → Progress set to 100%, reading_count = 1
-  - **"Read" → "To Read"** → Pop-up validates if book was read. If no: dates and progress reset. If yes: new input for dates/progress provided, original values remain visible and unchanged (detailed pop-up behavior to be specified in TODO section)
-  - **"Read" → "Currently Reading"** → Pop-up validates if book was read. If no: dates and progress reset. If yes: new input for dates/progress provided, original values remain visible and unchanged (detailed pop-up behavior to be specified in TODO section)
+  - **"Read" → "To Read"** → Pop-up appears asking "Are you starting a new reading session?" with "Yes" and "Cancel" options. If "Yes": original reading history remains visible, user can set new dates/progress, status changes. If "Cancel": status remains "Read", no changes.
+  - **"Read" → "Currently Reading"** → Pop-up appears asking "Are you starting a new reading session?" with "Yes" and "Cancel" options. If "Yes": original reading history remains visible, user can set new dates/progress, status changes. If "Cancel": status remains "Read", no changes.
   - **"Currently Reading" → "Read"** → If 1st time: progress set to 100%, reading_count = 1. If nth time: progress set to 100%, reading_count = previous + 1
 - Status change is saved immediately
 - UI updates to reflect new status

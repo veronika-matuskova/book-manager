@@ -100,7 +100,7 @@ As a user, I want to add books to the database so that I can build my collection
   - Cover image URL (optional, valid HTTP/HTTPS URL - if image fails to load, show book title and author name in a field; users cannot upload local images, only URLs)
   - Description/synopsis (optional, max 5000 characters - if more characters added, show error message)
 - [ ] Book is saved to the database
-- [ ] Duplicate detection (by ISBN or title+author combination)
+- [ ] Duplicate detection (by title+author combination only - different editions/formats with same title+author are NOT considered duplicates)
 - [ ] User receives confirmation when book is added
 - [ ] User can view all books in the database
 
@@ -146,7 +146,7 @@ As a user, I want to add books from the database to my collection so that I can 
 **Acceptance Criteria:**
 - [ ] User can browse/search the book database
 - [ ] User can select a book and add it to their collection
-- [ ] Book appears in user's "Owned Books" list
+- [ ] Book appears in user's "My Books" list
 - [ ] User can add the same book only once (prevent duplicates)
 - [ ] User receives confirmation when book is added to collection
 
@@ -154,7 +154,7 @@ As a user, I want to add books from the database to my collection so that I can 
 - Book search/browse interface
 - "Add to My Books" button on book details
 - Confirmation message
-- Navigation to "Owned Books" view
+- Navigation to "My Books" view
 
 **Data Model:**
 ```typescript
@@ -172,7 +172,7 @@ interface UserBook {
 
 ---
 
-#### 3.3.2 Manage Owned Books
+#### 3.3.2 Manage My Books
 **Priority:** P0 (Must Have)
 
 **Description:**  
@@ -199,13 +199,13 @@ As a user, I want to see and manage all the books I own so that I can keep track
   - ISBN
   - ASIN
 - [ ] Book count is calculated and displayed contextually where useful:
-  - Owned Books page: "9 books" (total owned books count)
+  - My Books page: "9 books" (total owned books count)
   - Explore page: total number of books in database
   - Search result page: "Found 3/300 books" (showing results count vs total database count)
   - Home page: total number of books in database
   - Book detail page: number of books in series (if the book is in a series)
 - [ ] Book count display appears only where appropriate and useful (not on every page)
-- [ ] Series count display: number of series user owns, displayed in Owned Books next to total number of owned books (a series can have multiple books, but 1 book cannot be in more than 1 series)
+- [ ] Series count display: number of series user owns, displayed in My Books next to total number of owned books (a series can have multiple books, but 1 book cannot be in more than 1 series)
 - [ ] User can sort books by:
   - Date added (latest first)
   - Title (A-Z)
@@ -227,7 +227,7 @@ As a user, I want to see and manage all the books I own so that I can keep track
 - [ ] Confirmation dialog appears before bulk operations
 
 **UI Requirements:**
-- "Owned Books" page/view
+- "My Books" page/view
 - Book card component with all relevant information
 - Checkbox on each book card for selection
 - Bulk action toolbar (appears when books are selected)
@@ -238,7 +238,7 @@ As a user, I want to see and manage all the books I own so that I can keep track
 - Remove/delete confirmation
 - Bulk operation confirmation dialog
 
-**Inspiration:** Based on StoryGraph's "Owned Books" interface with:
+**Inspiration:** Based on StoryGraph's "My Books" interface with:
 - Search functionality
 - Filter list (collapsible)
 - Sort options (Latest added, etc.)
@@ -273,7 +273,7 @@ As a user, I want to mark books with different reading statuses so that I can tr
 **UI Requirements:**
 - Status dropdown/selector on book card or detail page
 - Visual indicator of status (badge, color coding)
-- Status filter in owned books view
+- Status filter in My Books view
 - Quick status change from book list view
 
 **Data Model:**
@@ -331,7 +331,7 @@ As a user, I want to record when I started and finished reading books so that I 
 ### 4.1 First-Time User Flow
 1. User opens application
 2. User creates profile (username, display name, email)
-3. User is taken to empty "Owned Books" view
+3. User is taken to empty "My Books" view
 4. User sees prompt to "Add Your First Book"
 5. User adds a book to database
 6. User adds book to their collection
@@ -349,7 +349,7 @@ As a user, I want to record when I started and finished reading books so that I 
 9. If book is already in collection, duplicate is prevented
 
 ### 4.3 Managing Reading Status Flow
-1. User views "Owned Books" page
+1. User views "My Books" page
 2. User clicks on a book card or selects book from list
 3. User sees book details
 4. User changes status via dropdown
@@ -418,7 +418,7 @@ As a user, I want to record when I started and finished reading books so that I 
   - No changes to dates, progress, or reading count
 
 ### 4.4 Filtering and Searching Flow
-1. User navigates to "Owned Books" page
+1. User navigates to "My Books" page
 2. User sees filter section (collapsible)
 3. User expands filter section
 4. User selects filter criteria (status, genre, author, etc.)
@@ -428,7 +428,7 @@ As a user, I want to record when I started and finished reading books so that I 
 8. User can use search bar to find specific books
 
 ### 4.5 Bulk Operations Flow
-1. User navigates to "Owned Books" page
+1. User navigates to "My Books" page
 2. User enables selection mode (or checkboxes are always visible)
 3. User selects multiple books by clicking checkboxes
 4. Bulk action toolbar appears showing "X books selected"
@@ -559,8 +559,8 @@ CREATE INDEX idx_books_series_id ON books(series_id) WHERE series_id IS NOT NULL
 
 #### 6.2.1 Navigation Bar
 - Logo/Brand name
-- Menu items: Explore, Stats (future), Challenges (future), Community (future)
 - Search bar: "Search all books..." (searches entire book database, highlights books owned by user with "owned" tag - same behavior as Explore page)
+- Menu items: Explore, My books, Add books
 - User profile icon/menu
 - Note: Book count display shown contextually in search results (e.g., "Found 3/300 books") rather than in navigation bar
 
@@ -572,6 +572,7 @@ CREATE INDEX idx_books_series_id ON books(series_id) WHERE series_id IS NOT NULL
 - **Search and Filters:**
   - Search input: "Search all books..." (searches entire book database, highlights books owned by user with "owned" tag)
   - Search results show contextual count: "Found 3/300 books" (results count vs total database)
+  - If no search results found: Suggest "Add Book" page with link/button
   - Collapsible "Filter list" section
   - Sort dropdown
   
@@ -581,19 +582,26 @@ CREATE INDEX idx_books_series_id ON books(series_id) WHERE series_id IS NOT NULL
   - Books in series are highlighted with "series" tag and show series name detail
   - Each card shows book information
   - "Add to My Books" button for books not in collection
+  - **Pagination:**
+    - Default: 25 books per page
+    - Maximum: 100 books per page
+    - Dropdown to select items per page (25, 50, 75, 100)
+    - Supports both infinite scroll and page navigation
+    - Page navigation controls (Previous/Next, page numbers)
 
-#### 6.2.3 Owned Books Page
+#### 6.2.3 My Books Page
 - **Header:**
-  - "Owned Books" title with book icon
+  - "My Books" title with book icon
   - Book count display (e.g., "9 books") - real-time count of owned books
   - Series count display (e.g., "3 series") - number of series user owns, displayed next to total number of owned books (a series can have multiple books, but 1 book cannot be in more than 1 series)
   
 - **Search and Filters:**
   - Search input: "Search books..." (searches only books owned by user)
-  - Search results show contextual count: "Found 3/300 books" (results count vs total database)
+  - Search results show contextual count: "Found 3/9 books" (results count vs total owned)
+  - If no search results found: Suggest "Add Book" page with link/button
   - Collapsible "Filter list" section
   - Sort dropdown: "Latest added" (default), Title A-Z, Author A-Z, etc.
-  - When filters applied, show: "Showing 5 of 9 owned books" (filtered count vs total owned)
+  - When filters applied, show: "Showing 5 of 9 books" (filtered count vs total owned)
   
 - **Book List:**
   - Grid or list view of book cards
@@ -617,6 +625,12 @@ CREATE INDEX idx_books_series_id ON books(series_id) WHERE series_id IS NOT NULL
     - Action buttons: "owned" tag (if book is in user's collection), "buy" (future)
     - Status dropdown
     - "Mark as finished" checkbox
+  - **Pagination:**
+    - Default: 25 books per page
+    - Maximum: 100 books per page
+    - Dropdown to select items per page (25, 50, 75, 100)
+    - Supports both infinite scroll and page navigation
+    - Page navigation controls (Previous/Next, page numbers)
 
 #### 6.2.4 Add Book Page
 - Form with all book fields
@@ -626,24 +640,56 @@ CREATE INDEX idx_books_series_id ON books(series_id) WHERE series_id IS NOT NULL
 - Save/Cancel buttons
 - Note: Book count not displayed here (not useful context)
 
-#### 6.2.5 Book Detail View
-- Full book information
-- Series information displayed (if part of series) with "series" tag and series name
-- Series count display (if book is in a series) - shows number of books in the series (useful context)
-- Edit button
-- Status selector
-- Date pickers
-- Remove from collection button
-- Note: Book count not displayed here (not useful context for single book view)
+#### 6.2.5 Book Detail View (Modal/Pop-up)
+- **Display Type:** Modal/pop-up window that opens on top of Explore or My Books pages
+- **Opening:**
+  - Click on book card from Explore or My Books pages
+  - Opens as modal overlay, maintaining page context underneath
+- **Components:**
+  - Full book information display
+  - Series information displayed (if part of series) with "series" tag and series name
+  - Series count display (if book is in a series) - shows number of books in the series (useful context)
+  - Link/button to open Series Detail view (if book is in a series)
+  - Edit button (for UserBook metadata only)
+  - Status selector
+  - Date pickers
+  - Remove from collection button
+  - "Open in New Tab" button - opens book detail in separate browser tab/page
+  - Close button (X) - closes modal and returns to previous page context
+- **Behavior:**
+  - When closed, returns to previous page (Explore or My Books) with previous context maintained (scroll position, filters, search)
+  - Can be opened in separate tab via "Open in New Tab" button
+  - Note: Book count not displayed here (not useful context for single book view)
 
-#### 6.2.6 Profile Page
+#### 6.2.6 Series Detail View (Modal/Pop-up)
+- **Display Type:** Modal/pop-up window that opens on top of Book Detail View
+- **Opening:**
+  - Click on series name/link from Book Detail View (if book is in a series)
+  - Opens as modal overlay on top of Book Detail modal
+- **Components:**
+  - Series information (name, author)
+  - All books in the series listed
+  - Books displayed in order (if position is set)
+  - Books owned by user highlighted with "owned" tag
+  - Series count shows number of books in the series
+  - Reading count display (if applicable)
+  - Each book shows: cover, title, author
+  - Click on book card opens Book Detail View (replaces current Book Detail modal)
+  - "Open in New Tab" button - opens series detail in separate browser tab/page
+  - Close button (X) - closes modal and returns to Book Detail View
+- **Behavior:**
+  - When closed, returns to Book Detail View (if it was open)
+  - Can be opened in separate tab via "Open in New Tab" button
+  - Modal stacking: Series Detail modal appears on top of Book Detail modal
+
+#### 6.2.7 Profile Page
 - User information display
 - Edit profile button
 - Book count display (total owned books) - useful context for profile
 - Series count display (total series user has books from) - useful context for profile
 - Statistics (total books, reading stats) - optional for MVP
 
-#### 6.2.7 Bulk Operations View
+#### 6.2.8 Bulk Operations View
 - Bulk Edit Modal/Dialog:
   - Shows count of selected books
   - Form to edit common metadata:
@@ -797,12 +843,9 @@ The following features are **NOT** included in MVP but may be considered for fut
   - Partial success scenarios (some books fail validation)
 
 ### 12.3 State Transition Pop-ups
-- Specify detailed pop-up behavior for state transitions:
-  - "Read → To Read" transition pop-up content and options
-  - "Read → Currently Reading" transition pop-up content and options
-  - Button options and user actions
-  - What happens when user clicks "No, it wasn't read" vs "Yes, it was read"
-  - Cancel transition option
+- **Status:** Detailed specifications provided in Section 4.3.1 above.
+- All pop-up behaviors, button options, and user actions are now specified.
+- **Note:** "Read" → "To Read"/"Currently Reading" pop-up has only "Yes" and "Cancel" options (no "No, it wasn't read" option).
 
 ---
 

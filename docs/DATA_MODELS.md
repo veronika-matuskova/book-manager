@@ -113,7 +113,8 @@ enum BookFormat {
 
 ### Unique Constraints
 - Combination of `title` + `author` should be unique (case-insensitive)
-- Duplicate detection is based on title+author only (different editions/formats with same title+author are considered duplicates)
+- Duplicate detection is based on title+author only
+- **Note:** Different editions/formats with same title+author are **NOT** considered duplicates (other parameters like ISBN can vary)
 
 ### Example
 ```json
@@ -215,8 +216,8 @@ enum ReadingStatus {
 - If user manually sets progress to 50% and then changes status to "Read", progress is automatically updated to 100%
 - When status is "read", `progress` must be 100 (enforced by constraint)
 - **"To Read" → "Read"** → Progress set to 100%, new entry added to `reading_count_logs` table
-- **"Read" → "To Read"** → Pop-up validates if book was read. If no: dates and progress reset. If yes: new input for dates/progress provided, original values remain visible and unchanged
-- **"Read" → "Currently Reading"** → Pop-up validates if book was read. If no: dates and progress reset. If yes: new input for dates/progress provided, original values remain visible and unchanged
+- **"Read" → "To Read"** → Pop-up appears asking "Are you starting a new reading session?" with "Yes" and "Cancel" options. If "Yes": original reading history remains visible, user can set new dates/progress, status changes. If "Cancel": status remains "Read", no changes.
+- **"Read" → "Currently Reading"** → Pop-up appears asking "Are you starting a new reading session?" with "Yes" and "Cancel" options. If "Yes": original reading history remains visible, user can set new dates/progress, status changes. If "Cancel": status remains "Read", no changes.
 - **"Currently Reading" → "Read"** → If 1st time: progress set to 100%, new entry added to `reading_count_logs`. If nth time: progress set to 100%, new entry added to `reading_count_logs`
 - `finishedDate` must be >= `startedDate` if both are set
 - User can only edit UserBook metadata (status, dates, progress). If shared Book details need updating, user must create a new book entry.

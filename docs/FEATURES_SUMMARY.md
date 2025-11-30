@@ -18,7 +18,7 @@
 - Search books by title/author/ISBN/ASIN/series name/series author
 - Three search types:
   - Explore page: searches full DB, highlights owned books
-  - Owned Books page: searches only books owned by user
+  - My Books page: searches only books owned by user
   - Navigation search: searches full DB, highlights owned books (same as Explore)
 - Duplicate detection (by title+author combination only - other parameters can vary)
 - Series support: series name, author, books belong to ONE series (1 book cannot be in more than 1 series)
@@ -29,7 +29,7 @@
 
 ### ✅ 3. User Book Collection
 - Add books from database to personal collection
-- View "Owned Books" page
+- View "My Books" page
 - Book cards show: cover, title, author, status, dates, progress, genres, series info (highlighted with "series" tag and series name detail)
 - Remove books from collection (single or bulk)
 - Edit UserBook metadata (status, dates, progress) only; cannot edit shared Book records
@@ -38,12 +38,12 @@
   - Bulk remove multiple books from collection
   - Bulk edit metadata (status, dates, progress) for multiple books
 - Book count display shown contextually where useful:
-  - Owned Books page: "9 books" (total owned books)
+  - My Books page: "9 books" (total owned books)
   - Explore page: total number of books in database
   - Search result page: "Found 3/300 books" (results vs total database)
   - Home page: total number of books in database
   - Book detail page: number of books in series (if book is in a series)
-- Series count display: number of series user owns, displayed in Owned Books next to total number of owned books (a series can have multiple books, but 1 book cannot be in more than 1 series)
+- Series count display: number of series user owns, displayed in My Books next to total number of owned books (a series can have multiple books, but 1 book cannot be in more than 1 series)
 
 ### ✅ 4. Reading Status
 Four statuses available:
@@ -55,7 +55,7 @@ Four statuses available:
 **State Transitions:**
 - New book → "To Read" (progress = 0)
 - "To Read" → "Read": progress = 100%, user confirms via pop-up, reading_count increments (logged in reading_count_logs table)
-- "Read" → "To Read"/"Currently Reading": pop-up validation, preserves original dates/progress (detailed behavior in TODO)
+- "Read" → "To Read"/"Currently Reading": pop-up asks "Are you starting a new reading session?" with "Yes" and "Cancel" options. If "Yes": preserves original dates/progress, allows new input. If "Cancel": no changes.
 - "Currently Reading" → "Read": progress = 100%, user confirms via pop-up, reading_count increments (logged in reading_count_logs table)
 - Progress field: required, default 0 when book added, automatically 100 when status is "read"
 
@@ -86,7 +86,7 @@ Four statuses available:
 - Filter by ISBN (optional, advanced)
 - Filter by ASIN (optional, advanced)
 - Sort by: Latest added, Title, Author, Year, Date started, Date finished
-- Search within Owned Books (searches only books owned by user)
+- Search within My Books (searches only books owned by user)
 - Explore page search (searches full database, highlights owned books)
 - Navigation search (searches full database, highlights owned books - same as Explore)
 - Search results highlight books in series with "series" tag and show series name detail
@@ -138,7 +138,7 @@ Four statuses available:
 ✅ User can create profile  
 ✅ User can add books to database  
 ✅ User can add books to collection  
-✅ User can view owned books  
+✅ User can view My Books  
 ✅ User can set all 4 reading statuses  
 ✅ User can set start/finish dates  
 ✅ User can filter and search  
