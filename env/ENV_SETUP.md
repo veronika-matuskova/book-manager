@@ -22,17 +22,6 @@ STORY_GRAPH_USERNAME=your_storygraph_username
 STORY_GRAPH_PASSWORD=your_storygraph_password
 ```
 
-## Using Configuration in Your Code
-
-```typescript
-import { config } from './src/config';
-
-// Access configuration values
-const username = config.amazonUsername;
-const password = config.amazonPassword;
-const url = config.readAmazonUrl;
-```
-
 ## Security Notes
 
 - ✅ **DO**: Store credentials in `.env` file
