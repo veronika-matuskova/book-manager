@@ -1,4 +1,6 @@
 // Test setup file for Vitest
+import '@testing-library/jest-dom';
+
 // Mock localStorage for Node.js environment
 const localStorageMock = (() => {
   let store: Record<string, string> = {};

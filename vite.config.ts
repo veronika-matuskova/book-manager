@@ -12,13 +12,22 @@ export default defineConfig({
   publicDir: 'public',
   test: {
     globals: true,
-    environment: 'node',
+    environment: 'happy-dom',
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'tests/**/*'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html']
+      reporter: ['text', 'json', 'html'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/**/*.spec.{ts,tsx}',
+        'src/test/**',
+        'src/**/*.d.ts',
+        'src/main.tsx',
+        'src/App.tsx'
+      ]
     },
     testTimeout: 30000,
     pool: 'threads',

@@ -441,6 +441,41 @@ describe('database', () => {
       const count = database.getReadingCount(userId, bookId);
       expect(count).toBe(0);
     });
+
+    it('should get reading count for series', () => {
+      const series = database.createSeries({ name: 'Test Series', author: 'Series Author' });
+      const book = database.createBook({ title: 'Series Book', author: 'Book Author', seriesId: series.id });
+      
+      // Add reading count log for book
+      database.addReadingCountLog(userId, book.id);
+      
+      // Add reading count log for series
+      database.addReadingCountLog(userId, undefined, series.id);
+      
+      const bookCount = database.getReadingCount(userId, book.id);
+      const seriesCount = database.getReadingCount(userId, undefined, series.id);
+      
+      expect(bookCount).toBe(1);
+      expect(seriesCount).toBe(1);
+    });
+
+    it('should handle multiple reading count logs for series', () => {
+      const series = database.createSeries({ name: 'Another Series', author: 'Series Author' });
+      const book1 = database.createBook({ title: 'Series Book 1', author: 'Book Author', seriesId: series.id });
+      const book2 = database.createBook({ title: 'Series Book 2', author: 'Book Author', seriesId: series.id });
+      
+      // Add multiple reading count logs for series
+      database.addReadingCountLog(userId, undefined, series.id);
+      database.addReadingCountLog(userId, undefined, series.id);
+      database.addReadingCountLog(userId, undefined, series.id);
+      
+      const seriesCount = database.getReadingCount(userId, undefined, series.id);
+      expect(seriesCount).toBe(3);
+      
+      // Book counts should still be 0 (no book-specific logs)
+      expect(database.getReadingCount(userId, book1.id)).toBe(0);
+      expect(database.getReadingCount(userId, book2.id)).toBe(0);
+    });
   });
 
   describe('Statistics', () => {

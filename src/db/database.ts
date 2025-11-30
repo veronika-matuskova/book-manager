@@ -102,6 +102,43 @@ function formatDate(date: Date | undefined): string | null {
   return date.toISOString().split('T')[0];
 }
 
+// Helper to validate that date is not in the future
+function validateDateNotFuture(date: Date | undefined, fieldName: string): void {
+  if (!date) return;
+  const today = new Date();
+  today.setHours(23, 59, 59, 999); // End of today
+  if (date > today) {
+    throw new Error(`${fieldName} cannot be in the future`);
+  }
+}
+
+// Helper to validate email format
+function validateEmail(email: string | undefined): void {
+  if (!email) return; // Email is optional
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new Error('Please enter a valid email address');
+  }
+}
+
+// Helper to validate ISBN format (10 or 13 digits after removing non-numeric)
+function validateISBN(isbn: string | undefined): void {
+  if (!isbn) return; // ISBN is optional
+  const digits = isbn.replace(/\D/g, '');
+  if (digits.length !== 10 && digits.length !== 13) {
+    throw new Error('ISBN must be 10 or 13 digits');
+  }
+}
+
+// Helper to validate ASIN format (exactly 10 alphanumeric characters, uppercase)
+function validateASIN(asin: string | undefined): void {
+  if (!asin) return; // ASIN is optional
+  // ASIN must be exactly 10 alphanumeric characters and already uppercase
+  if (!/^[A-Z0-9]{10}$/.test(asin)) {
+    throw new Error('ASIN must be 10 alphanumeric characters');
+  }
+}
+
 // ============= USER OPERATIONS =============
 
 export function createUser(data: UserFormData): User {
@@ -109,10 +146,16 @@ export function createUser(data: UserFormData): User {
   const id = uuidv4();
   const now = new Date().toISOString();
 
-  // Validate username format
+  // Validate username format and length
+  if (data.username.length < 3 || data.username.length > 50) {
+    throw new Error('Username must be 3-50 characters and contain only letters, numbers, underscores, and hyphens');
+  }
   if (!/^[a-zA-Z0-9_-]+$/.test(data.username)) {
     throw new Error('Username must be 3-50 characters and contain only letters, numbers, underscores, and hyphens');
   }
+
+  // Validate email format
+  validateEmail(data.email);
 
   // Check uniqueness
   const existing = getUserByUsername(data.username);
@@ -193,6 +236,8 @@ export function updateUser(id: string, data: UserUpdateData): User {
     values.push(data.displayName || null);
   }
   if (data.email !== undefined) {
+    // Validate email format
+    validateEmail(data.email);
     updates.push('email = ?');
     values.push(data.email || null);
   }
@@ -214,6 +259,14 @@ export function createBook(data: BookFormData): Book {
   const db = getDb();
   const id = uuidv4();
   const now = new Date().toISOString();
+
+  // Validate ISBN format
+  validateISBN(data.isbn);
+
+  // Validate ASIN format
+  if (data.asin) {
+    validateASIN(data.asin);
+  }
 
   // Check for duplicates (title + author)
   const existing = execSelectOne(
@@ -614,6 +667,16 @@ export function addBookToUserCollection(userId: string, bookId: string): UserBoo
   const id = uuidv4();
   const now = new Date().toISOString();
 
+  // Validate foreign keys exist
+  const user = getUser(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
+  const book = getBook(bookId);
+  if (!book) {
+    throw new Error('Book not found');
+  }
+
   // Check if already in collection
   const existing = getUserBook(userId, bookId);
   if (existing) {
@@ -791,6 +854,27 @@ export function updateUserBook(
   const now = new Date().toISOString();
   const updates: string[] = [];
   const values: any[] = [];
+
+  // Validate dates are not in the future
+  validateDateNotFuture(data.startedDate, 'Start date');
+  validateDateNotFuture(data.finishedDate, 'Finish date');
+
+  // Validate date range (finished >= started if both exist)
+  if (data.startedDate && data.finishedDate && data.finishedDate < data.startedDate) {
+    throw new Error('Start date must be prior to finish date');
+  }
+
+  // If updating dates, also check existing dates in database
+  if (data.startedDate !== undefined || data.finishedDate !== undefined) {
+    const existing = getUserBook(userId, bookId);
+    if (existing) {
+      const startDate = data.startedDate !== undefined ? data.startedDate : existing.startedDate;
+      const finishDate = data.finishedDate !== undefined ? data.finishedDate : existing.finishedDate;
+      if (startDate && finishDate && finishDate < startDate) {
+        throw new Error('Start date must be prior to finish date');
+      }
+    }
+  }
 
   if (data.status !== undefined) {
     updates.push('status = ?');

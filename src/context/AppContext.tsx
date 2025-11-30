@@ -44,6 +44,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const newUser = createUser(data);
       setUser(newUser);
     } catch (error) {
+      // Log error but don't throw - let the caller handle it
+      console.error('Failed to create user:', error);
       throw error;
     }
   };
