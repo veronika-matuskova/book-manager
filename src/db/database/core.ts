@@ -12,32 +12,66 @@ export async function initDatabase(): Promise<void> {
     return;
   }
 
-  const SQL = await initSqlJs({
-    locateFile: (file: string) => `https://sql.js.org/dist/${file}`
-  });
+  try {
+    const SQL = await initSqlJs({
+      locateFile: (file: string) => `https://sql.js.org/dist/${file}`
+    });
 
-  // Try to load existing database from localStorage
-  const savedDb = localStorage.getItem(DB_KEY);
-  if (savedDb) {
-    try {
-      const decoded = atob(savedDb);
-      const buffer = Uint8Array.from(decoded, c => c.charCodeAt(0));
-      dbInstance = new SQL.Database(buffer);
-    } catch (error) {
-      console.error('Failed to load database from localStorage, creating new one:', error);
-      // If loading fails, create a new database
+    // Verify SQL object is valid
+    if (!SQL || typeof SQL.Database !== 'function') {
+      throw new Error('Failed to initialize sql.js: SQL.Database is not available');
+    }
+
+    // Try to load existing database from localStorage
+    const savedDb = localStorage.getItem(DB_KEY);
+    if (savedDb) {
+      try {
+        const decoded = atob(savedDb);
+        const buffer = Uint8Array.from(decoded, c => c.charCodeAt(0));
+        dbInstance = new SQL.Database(buffer);
+      } catch (error) {
+        console.error('Failed to load database from localStorage, creating new one:', error);
+        // If loading fails, create a new database
+        dbInstance = new SQL.Database();
+        const schema = createSchema();
+        dbInstance.run(schema);
+        // Don't throw if saveDatabase fails - database is still usable
+        try {
+          saveDatabase();
+        } catch (saveError) {
+          console.warn('Failed to save database to localStorage:', saveError);
+        }
+      }
+    } else {
+      // Create new database
       dbInstance = new SQL.Database();
+      // Create schema
       const schema = createSchema();
       dbInstance.run(schema);
-      saveDatabase();
+      // Don't throw if saveDatabase fails - database is still usable
+      try {
+        saveDatabase();
+      } catch (saveError) {
+        console.warn('Failed to save database to localStorage:', saveError);
+      }
     }
-  } else {
-    // Create new database
-    dbInstance = new SQL.Database();
-    // Create schema
-    const schema = createSchema();
-    dbInstance.run(schema);
-    saveDatabase();
+
+    // Verify that dbInstance was actually set and is valid
+    if (!dbInstance) {
+      throw new Error('Failed to initialize database: dbInstance is null after initialization');
+    }
+
+    // Verify database is actually usable by running a simple query
+    try {
+      dbInstance.exec('SELECT 1');
+    } catch (testError) {
+      throw new Error(`Database initialized but not usable: ${testError instanceof Error ? testError.message : String(testError)}`);
+    }
+  } catch (error) {
+    // Ensure dbInstance is null on error so we can retry
+    dbInstance = null;
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to initialize database: ${errorMessage}`);
   }
 }
 

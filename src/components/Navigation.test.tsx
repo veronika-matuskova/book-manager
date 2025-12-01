@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import Navigation from './Navigation';
 import { AppProvider } from '../context/AppContext';
 import * as database from '../db/database';
@@ -12,13 +12,33 @@ vi.mock('../db/database', async (importOriginal) => {
   return {
     ...actual,
     searchBooks: vi.fn(() => []),
-    initDatabase: vi.fn().mockResolvedValue(undefined) // Mock initDatabase to avoid sql.js WASM loading
+    // Mock initDatabase to actually initialize a test database
+    initDatabase: vi.fn().mockImplementation(async () => {
+      // Only initialize if not already initialized
+      if (!actual._getDbInstance()) {
+        const SQL = await import('sql.js');
+        const path = await import('path');
+        const SQLModule = await SQL.default({
+          locateFile: (file: string) => path.default.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file)
+        });
+        const testDb = new SQLModule.Database();
+        const { createSchema } = await import('../db/schema');
+        testDb.run(createSchema());
+        actual._setTestDbInstance(testDb);
+      }
+    })
   };
 });
 
 const renderWithProviders = (component: React.ReactElement, initialEntries = ['/']) => {
   return render(
-    <MemoryRouter initialEntries={initialEntries}>
+    <MemoryRouter
+      initialEntries={initialEntries}
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       <AppProvider>
         {component}
       </AppProvider>
@@ -30,6 +50,13 @@ describe('Navigation', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();
+    // Reset database instance before each test
+    database._resetDbInstance();
+  });
+
+  afterEach(() => {
+    // Clean up database instance after each test
+    database._resetDbInstance();
   });
 
   it('should render navigation links', () => {

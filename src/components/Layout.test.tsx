@@ -9,10 +9,17 @@ vi.mock('./Navigation', () => ({
   default: () => <nav data-testid="navigation">Navigation</nav>
 }));
 
+const routerProps = {
+  future: {
+    v7_startTransition: true,
+    v7_relativeSplatPath: true
+  }
+};
+
 describe('Layout', () => {
   it('should render children content', () => {
     render(
-      <BrowserRouter>
+      <BrowserRouter {...routerProps}>
         <Layout>
           <div>Test Content</div>
         </Layout>
@@ -24,7 +31,7 @@ describe('Layout', () => {
 
   it('should render Navigation component', () => {
     render(
-      <BrowserRouter>
+      <BrowserRouter {...routerProps}>
         <Layout>
           <div>Content</div>
         </Layout>
@@ -36,7 +43,7 @@ describe('Layout', () => {
 
   it('should have proper layout structure', () => {
     const { container } = render(
-      <BrowserRouter>
+      <BrowserRouter {...routerProps}>
         <Layout>
           <div>Content</div>
         </Layout>
@@ -50,7 +57,7 @@ describe('Layout', () => {
 
   it('should render multiple children', () => {
     render(
-      <BrowserRouter>
+      <BrowserRouter {...routerProps}>
         <Layout>
           <div>First</div>
           <div>Second</div>

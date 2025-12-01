@@ -5,7 +5,16 @@ import type { BookWithDetails, ReadingStatus } from '../types';
 
 // Helper to wrap component with router
 const renderWithRouter = (component: React.ReactElement) => {
-  return render(<BrowserRouter>{component}</BrowserRouter>);
+  return render(
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
+      {component}
+    </BrowserRouter>
+  );
 };
 
 describe('BookCard', () => {

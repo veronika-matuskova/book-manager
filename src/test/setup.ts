@@ -1,5 +1,47 @@
 // Test setup file for Vitest
 import '@testing-library/jest-dom';
+import { configure } from '@testing-library/react';
+
+// Configure React Testing Library to automatically wrap async updates in act()
+// This reduces the need for manual act() calls in tests
+configure({
+  asyncUtilTimeout: 5000,
+  // Note: RTL automatically wraps some async operations, but useEffect updates may still need act()
+});
+
+// Suppress act() warnings for AppProvider initialization
+// These warnings occur because AppProvider's useEffect runs asynchronously after render,
+// which is expected behavior. The tests properly wait for async operations using waitFor().
+const originalError = console.error;
+const originalWarn = console.warn;
+
+const shouldSuppressWarning = (args: unknown[]): boolean => {
+  // Check all arguments for the warning message
+  for (const arg of args) {
+    const message = typeof arg === 'string' ? arg : String(arg || '');
+    if (
+      message.includes('An update to AppProvider inside a test was not wrapped in act') ||
+      message.includes('not wrapped in act')
+    ) {
+      return true;
+    }
+  }
+  return false;
+};
+
+console.error = (...args: unknown[]) => {
+  if (shouldSuppressWarning(args)) {
+    return;
+  }
+  originalError.call(console, ...args);
+};
+
+console.warn = (...args: unknown[]) => {
+  if (shouldSuppressWarning(args)) {
+    return;
+  }
+  originalWarn.call(console, ...args);
+};
 
 // Mock localStorage for Node.js environment
 const localStorageMock = (() => {

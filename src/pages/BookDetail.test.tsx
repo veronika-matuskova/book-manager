@@ -61,7 +61,13 @@ const mockBookWithDetails = {
 
 const renderWithProviders = (component: React.ReactElement, initialEntries = ['/book/book-1']) => {
   return render(
-    <MemoryRouter initialEntries={initialEntries}>
+    <MemoryRouter
+      initialEntries={initialEntries}
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       <AppProvider>
         <Routes>
           <Route path="/book/:id" element={component} />
@@ -324,7 +330,7 @@ describe('BookDetail', () => {
     expect(mockNavigate).toHaveBeenCalled();
   });
 
-  it('should show loading spinner when book is not loaded', () => {
+  it('should show loading spinner when book is not loaded', async () => {
     vi.mocked(database.getBook).mockReturnValue(null);
     
     renderWithProviders(<BookDetail />);
