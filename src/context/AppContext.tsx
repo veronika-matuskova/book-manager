@@ -26,9 +26,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
       try {
         await initDatabase();
         
-        // Verify database is initialized before proceeding
-        // This ensures dbInstance is set before calling getFirstUser
-        const existingUser = getFirstUser();
+        // Only proceed if database initialization succeeded
+        // getFirstUser will throw if database is not initialized, so we catch that
+        let existingUser: User | null = null;
+        try {
+          existingUser = getFirstUser();
+        } catch (userError) {
+          // If getFirstUser fails, database might not be fully initialized
+          console.error('Failed to get first user after initialization:', userError);
+          throw new Error('Database initialized but not accessible');
+        }
+        
         setIsInitialized(true);
         setInitError(null);
         

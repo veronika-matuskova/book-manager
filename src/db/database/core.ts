@@ -17,6 +17,11 @@ export async function initDatabase(): Promise<void> {
       locateFile: (file: string) => `https://sql.js.org/dist/${file}`
     });
 
+    // Verify SQL object is valid
+    if (!SQL || typeof SQL.Database !== 'function') {
+      throw new Error('Failed to initialize sql.js: SQL.Database is not available');
+    }
+
     // Try to load existing database from localStorage
     const savedDb = localStorage.getItem(DB_KEY);
     if (savedDb) {
@@ -30,7 +35,12 @@ export async function initDatabase(): Promise<void> {
         dbInstance = new SQL.Database();
         const schema = createSchema();
         dbInstance.run(schema);
-        saveDatabase();
+        // Don't throw if saveDatabase fails - database is still usable
+        try {
+          saveDatabase();
+        } catch (saveError) {
+          console.warn('Failed to save database to localStorage:', saveError);
+        }
       }
     } else {
       // Create new database
@@ -38,17 +48,30 @@ export async function initDatabase(): Promise<void> {
       // Create schema
       const schema = createSchema();
       dbInstance.run(schema);
-      saveDatabase();
+      // Don't throw if saveDatabase fails - database is still usable
+      try {
+        saveDatabase();
+      } catch (saveError) {
+        console.warn('Failed to save database to localStorage:', saveError);
+      }
     }
 
-    // Verify that dbInstance was actually set
+    // Verify that dbInstance was actually set and is valid
     if (!dbInstance) {
       throw new Error('Failed to initialize database: dbInstance is null after initialization');
+    }
+
+    // Verify database is actually usable by running a simple query
+    try {
+      dbInstance.exec('SELECT 1');
+    } catch (testError) {
+      throw new Error(`Database initialized but not usable: ${testError instanceof Error ? testError.message : String(testError)}`);
     }
   } catch (error) {
     // Ensure dbInstance is null on error so we can retry
     dbInstance = null;
-    throw error;
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to initialize database: ${errorMessage}`);
   }
 }
 
