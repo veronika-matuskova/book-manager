@@ -10,7 +10,21 @@ vi.mock('../db/database', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../db/database')>();
   return {
     ...actual,
-    initDatabase: vi.fn().mockResolvedValue(undefined),
+    // Mock initDatabase to actually initialize a test database
+    initDatabase: vi.fn().mockImplementation(async () => {
+      // Only initialize if not already initialized
+      if (!actual._getDbInstance()) {
+        const SQL = await import('sql.js');
+        const path = await import('path');
+        const SQLModule = await SQL.default({
+          locateFile: (file: string) => path.default.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file)
+        });
+        const testDb = new SQLModule.Database();
+        const { createSchema } = await import('../db/schema');
+        testDb.run(createSchema());
+        actual._setTestDbInstance(testDb);
+      }
+    }),
     createUser: vi.fn()
   };
 });
@@ -45,6 +59,13 @@ describe('ProfileSetup', () => {
     localStorage.clear();
     vi.clearAllMocks();
     mockNavigate.mockClear();
+    // Reset database instance before each test
+    database._resetDbInstance();
+  });
+
+  afterEach(() => {
+    // Clean up database instance after each test
+    database._resetDbInstance();
   });
 
   it('should render profile setup form', () => {
