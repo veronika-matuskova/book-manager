@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import Navigation from './Navigation';
 import { AppProvider } from '../context/AppContext';
 import * as database from '../db/database';

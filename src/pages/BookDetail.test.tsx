@@ -330,7 +330,7 @@ describe('BookDetail', () => {
     expect(mockNavigate).toHaveBeenCalled();
   });
 
-  it('should show loading spinner when book is not loaded', () => {
+  it('should show loading spinner when book is not loaded', async () => {
     vi.mocked(database.getBook).mockReturnValue(null);
     
     renderWithProviders(<BookDetail />);
