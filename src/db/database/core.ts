@@ -12,32 +12,43 @@ export async function initDatabase(): Promise<void> {
     return;
   }
 
-  const SQL = await initSqlJs({
-    locateFile: (file: string) => `https://sql.js.org/dist/${file}`
-  });
+  try {
+    const SQL = await initSqlJs({
+      locateFile: (file: string) => `https://sql.js.org/dist/${file}`
+    });
 
-  // Try to load existing database from localStorage
-  const savedDb = localStorage.getItem(DB_KEY);
-  if (savedDb) {
-    try {
-      const decoded = atob(savedDb);
-      const buffer = Uint8Array.from(decoded, c => c.charCodeAt(0));
-      dbInstance = new SQL.Database(buffer);
-    } catch (error) {
-      console.error('Failed to load database from localStorage, creating new one:', error);
-      // If loading fails, create a new database
+    // Try to load existing database from localStorage
+    const savedDb = localStorage.getItem(DB_KEY);
+    if (savedDb) {
+      try {
+        const decoded = atob(savedDb);
+        const buffer = Uint8Array.from(decoded, c => c.charCodeAt(0));
+        dbInstance = new SQL.Database(buffer);
+      } catch (error) {
+        console.error('Failed to load database from localStorage, creating new one:', error);
+        // If loading fails, create a new database
+        dbInstance = new SQL.Database();
+        const schema = createSchema();
+        dbInstance.run(schema);
+        saveDatabase();
+      }
+    } else {
+      // Create new database
       dbInstance = new SQL.Database();
+      // Create schema
       const schema = createSchema();
       dbInstance.run(schema);
       saveDatabase();
     }
-  } else {
-    // Create new database
-    dbInstance = new SQL.Database();
-    // Create schema
-    const schema = createSchema();
-    dbInstance.run(schema);
-    saveDatabase();
+
+    // Verify that dbInstance was actually set
+    if (!dbInstance) {
+      throw new Error('Failed to initialize database: dbInstance is null after initialization');
+    }
+  } catch (error) {
+    // Ensure dbInstance is null on error so we can retry
+    dbInstance = null;
+    throw error;
   }
 }
 

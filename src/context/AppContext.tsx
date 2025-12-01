@@ -25,11 +25,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     async function initialize() {
       try {
         await initDatabase();
+        
+        // Verify database is initialized before proceeding
+        // This ensures dbInstance is set before calling getFirstUser
+        const existingUser = getFirstUser();
         setIsInitialized(true);
         setInitError(null);
         
-        // Check for existing user (MVP supports single user)
-        const existingUser = getFirstUser();
         if (existingUser) {
           setUser(existingUser);
         }
@@ -39,6 +41,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           ? error.message 
           : 'Failed to initialize database. Please refresh the page to try again.';
         setInitError(errorMessage);
+        setIsInitialized(false);
       } finally {
         setIsLoading(false);
       }
