@@ -35,7 +35,12 @@ describe('AddBook', () => {
 
   it('should render add book form', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );
@@ -49,7 +54,12 @@ describe('AddBook', () => {
 
   it('should validate title is required', async () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );
@@ -69,7 +79,12 @@ describe('AddBook', () => {
 
   it('should validate author is required', async () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );
@@ -92,7 +107,12 @@ describe('AddBook', () => {
 
   it('should validate ISBN format (must be 10 or 13 digits)', async () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );
@@ -126,7 +146,12 @@ describe('AddBook', () => {
     vi.mocked(database.createBook).mockReturnValue(mockBook);
     
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );
@@ -161,7 +186,12 @@ describe('AddBook', () => {
     vi.mocked(database.createBook).mockReturnValue(mockBook);
     
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );
@@ -184,7 +214,12 @@ describe('AddBook', () => {
 
   it('should validate ASIN format (must be 10 alphanumeric)', async () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );
@@ -218,7 +253,12 @@ describe('AddBook', () => {
     vi.mocked(database.createBook).mockReturnValue(mockBook);
     
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );
@@ -245,7 +285,12 @@ describe('AddBook', () => {
 
   it('should validate description length (max 5000 characters)', async () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );
@@ -283,7 +328,12 @@ describe('AddBook', () => {
     vi.mocked(database.createBook).mockReturnValue(mockBook);
     
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );
@@ -314,7 +364,12 @@ describe('AddBook', () => {
     });
     
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );
@@ -335,7 +390,12 @@ describe('AddBook', () => {
 
   it('should clear errors when user types in field', async () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AddBook />
       </MemoryRouter>
     );

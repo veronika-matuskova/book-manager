@@ -18,7 +18,13 @@ vi.mock('../db/database', async (importOriginal) => {
 
 const renderWithProviders = (component: React.ReactElement, initialEntries = ['/']) => {
   return render(
-    <MemoryRouter initialEntries={initialEntries}>
+    <MemoryRouter
+      initialEntries={initialEntries}
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       <AppProvider>
         {component}
       </AppProvider>

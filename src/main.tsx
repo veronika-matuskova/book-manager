@@ -9,7 +9,7 @@ if (import.meta.env.DEV) {
   // Dynamic import to avoid including in production bundle
   import('./db/data-io').then((dataIO) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).dataIO = dataIO;
+    (globalThis as any).dataIO = dataIO;
     console.log('💡 dataIO functions available in console (dev mode only)');
     console.log('   Example: await window.dataIO.loadAndImportFromDataFolder("export/example-data.json")');
   }).catch((error) => {

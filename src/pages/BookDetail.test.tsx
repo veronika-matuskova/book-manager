@@ -61,7 +61,13 @@ const mockBookWithDetails = {
 
 const renderWithProviders = (component: React.ReactElement, initialEntries = ['/book/book-1']) => {
   return render(
-    <MemoryRouter initialEntries={initialEntries}>
+    <MemoryRouter
+      initialEntries={initialEntries}
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       <AppProvider>
         <Routes>
           <Route path="/book/:id" element={component} />
